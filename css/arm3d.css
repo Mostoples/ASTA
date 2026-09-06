@@ -1,0 +1,258 @@
+/* ============================================================
+   ASTA — Panggung 3D Lengan Bionik
+   Mengikuti bahasa visual neumorphism pada tokens.css.
+   Kelas diawali arm3d- agar tidak bertabrakan dengan .arm-stage
+   yang sudah dipakai sebagai wadah halaman.
+   ============================================================ */
+
+.arm3d-stage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* ---------------- Bilah kendali ---------------- */
+.arm3d-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.arm3d-toggle,
+.arm3d-views {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--r-md);
+  background: var(--bg-deep);
+  box-shadow: var(--nm-in-soft);
+}
+.arm3d-views { flex-wrap: wrap; }
+
+.arm3d-toggle-btn,
+.arm3d-view-btn {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: .02em;
+  color: var(--text-3);
+  background: transparent;
+  padding: 6px 13px;
+  border-radius: var(--r-sm);
+  transition: color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+.arm3d-toggle-btn:hover,
+.arm3d-view-btn:hover { color: var(--text); }
+
+.arm3d-toggle-btn.active,
+.arm3d-view-btn.active {
+  color: var(--primary-700);
+  background: var(--surface-alt);
+  box-shadow: var(--nm-flat);
+}
+.arm3d-toggle-btn:focus-visible,
+.arm3d-view-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ---------------- Panel tampilan ---------------- */
+.arm3d-pane { position: relative; }
+.arm3d-pane[hidden] { display: none; }
+.arm3d-pane-2d { display: grid; place-items: center; }
+
+.arm3d-canvas {
+  position: relative;
+  width: 100%;
+  /* Cukup tinggi agar lengan sepanjang 62 cm terbaca utuh */
+  aspect-ratio: 4 / 3;
+  min-height: 260px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(ellipse at 50% 24%, #ffffff 0%, var(--surface) 46%, var(--bg-deep) 100%);
+  box-shadow: var(--nm-in);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  /* Cegah pull-to-refresh saat pengguna memutar model di ponsel */
+  touch-action: none;
+}
+.arm3d-canvas canvas { border-radius: inherit; }
+
+/* Petunjuk seret, memudar setelah interaksi pertama */
+.arm3d-canvas::after {
+  content: 'Seret untuk memutar';
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--text-3);
+  background: rgba(255, 255, 255, .74);
+  padding: 4px 11px;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: .9;
+  transition: opacity 320ms ease;
+}
+.arm3d-canvas:active::after { opacity: 0; }
+
+/* ---------------- Keadaan memuat ---------------- */
+.arm3d-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-3);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  background: inherit;
+}
+.arm3d-spinner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2.5px solid var(--line);
+  border-top-color: var(--primary);
+  animation: arm3d-spin 820ms linear infinite;
+}
+@keyframes arm3d-spin { to { transform: rotate(360deg); } }
+
+/* ---------------- Penampil sprite (tanpa WebGL) ---------------- */
+.arm3d-sprite {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+.arm3d-sprite img {
+  grid-area: 1 / 1;
+  max-width: 92%;
+  max-height: 92%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 18px rgba(20, 45, 85, .16));
+}
+.arm3d-sprite:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+
+/* ---------------- Hero 3D pada halaman masuk ---------------- */
+.hero3d {
+  position: relative;
+  margin-top: var(--s-6);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: rgba(255, 255, 255, .10);
+  box-shadow: 0 18px 40px rgba(6, 24, 56, .28);
+  /* Sedikit kedalaman: gambar bereaksi terhadap gerak kursor */
+  perspective: 900px;
+}
+.hero3d img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg)) scale(1.02);
+  transition: transform 420ms cubic-bezier(.2, .8, .2, 1);
+  will-change: transform;
+}
+.hero3d figcaption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 22px 16px 12px;
+  font-size: 11.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .92);
+  background: linear-gradient(to top, rgba(8, 26, 58, .72), transparent);
+}
+
+/* ---------------- Galeri render ---------------- */
+.render-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--s-4);
+}
+.render-card {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--nm-2);
+}
+.render-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: var(--bg-deep);
+}
+.render-card figcaption {
+  padding: var(--s-3) var(--s-4);
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.render-card figcaption b { display: block; color: var(--text); font-size: 13.5px; }
+
+/* Kartu pose genggaman */
+.pose-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--s-3);
+}
+.pose-card {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  padding: var(--s-2) var(--s-2) var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--nm-1);
+  text-align: center;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+.pose-card:hover { transform: translateY(-2px); box-shadow: var(--nm-2); }
+.pose-card.active { box-shadow: var(--nm-in-soft); background: var(--primary-50); }
+.pose-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+}
+.pose-card span {
+  display: block;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text-2);
+}
+.pose-card.active span { color: var(--primary-700); }
+
+/* ---------------- Ponsel ---------------- */
+@media (max-width: 720px) {
+  .arm3d-canvas { min-height: 220px; aspect-ratio: 1 / 1; }
+  .arm3d-bar { gap: var(--s-2); }
+  .arm3d-views { width: 100%; justify-content: center; }
+  .arm3d-view-btn { padding: 6px 10px; font-size: 11.5px; }
+}
+
+/* Hormati preferensi pengurangan gerak */
+@media (prefers-reduced-motion: reduce) {
+  .hero3d img { transition: none; }
+  .arm3d-spinner { animation-duration: 2s; }
+  .pose-card { transition: none; }
+}

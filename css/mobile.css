@@ -1,0 +1,503 @@
+/* ============================================================
+   ASTA — Lapisan Mobile
+   ------------------------------------------------------------
+   Dimuat paling akhir agar dapat menimpa aturan sebelumnya.
+
+   Pertimbangan utama: sebagian besar pengguna ASTA adalah
+   penyandang amputasi lengan yang mengoperasikan ponsel dengan
+   SATU TANGAN. Karena itu pada layar kecil:
+     - navigasi utama dipindah ke bawah (jangkauan ibu jari)
+     - target sentuh minimum 44px
+     - tombol aksi utama dibuat melebar penuh
+     - tidak ada scroll horizontal pada tingkat halaman
+   ============================================================ */
+
+/* ============================================================
+   1. Dasar: cegah scroll horizontal di seluruh aplikasi
+   ============================================================ */
+html, body { max-width: 100%; }
+
+@media (max-width: 960px) {
+  /* Cegah geser ke samping tanpa mengubah html/body menjadi
+     kontainer scroll sendiri. Memberi `overflow-x: hidden` pada
+     <html> yang tinggi 100% membuat dokumen berhenti menjadi
+     elemen yang menggulir, sehingga scroll dan posisi elemen
+     sticky berperilaku tidak wajar di ponsel. */
+  html {
+    overflow-x: clip;
+    height: auto;
+    min-height: 100%;
+  }
+  body {
+    overflow-x: clip;
+    height: auto;
+    min-height: 100%;
+  }
+
+  /* Semua wadah fleks/grid boleh menyusut.
+     Tanpa ini, konten panjang memaksa lebar induk melebihi layar. */
+  .app, .main, .content, .card, .row, .col, .grid,
+  .row-t, .card-head, .page-head, .sched-item, .notif-item,
+  .ex-item, .stat, .mini-stat, .alert, .toast {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Kata panjang (email, nomor seri, URL) tidak boleh melebarkan layout */
+  .card, .alert, .notif-item, .sched-item, .ex-item,
+  p, dd, dt, td, th, .t-sm, .t-xs, figcaption {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .mono { word-break: break-all; }
+}
+
+/* ============================================================
+   2. Tipografi: tidak ada teks di bawah 12px
+   ============================================================ */
+@media (max-width: 960px) {
+  :root {
+    --fs-xs: 12px;
+    --fs-sm: 13.5px;
+    --fs-md: 15px;
+    --fs-lg: 17px;
+    --fs-xl: 20px;
+    --fs-2xl: 24px;
+    --fs-3xl: 30px;
+  }
+  /* Semua label kecil dinaikkan ke 12px, batas nyaman baca di ponsel */
+  .upper, .stat-label, .nav-group-title, .cal-dow, .div-label,
+  .brand-tag, .step-dot, .ms-l, .hint, .legend-pain, .chart-legend,
+  .emg-legend, .ch-name, .ch-val, .grip-opt .g-name, .tabbar a {
+    font-size: 12px;
+    letter-spacing: .04em;
+  }
+  .table th { font-size: 12px; }
+  .table td.mono, .mono { font-size: 12.5px; }
+  .cal-dow { letter-spacing: 0; }
+  .page-title { font-size: 22px; }
+  .stat-value { font-size: 22px; }
+  .rep-big { font-size: 52px; }
+  .timer-big { font-size: 34px; }
+  .cue-text { font-size: 18px; }
+}
+
+/* ============================================================
+   3. Target sentuh minimum 44px
+   ============================================================ */
+@media (max-width: 960px) {
+  .btn-sm {
+    min-height: 44px;
+    padding: 0 var(--s-4);
+    font-size: 13.5px;
+  }
+  .btn-icon.btn-sm { width: 44px; min-width: 44px; }
+  .chip { min-height: 44px; }
+  .tab { min-height: 46px; }
+  .seg { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; }
+  .seg button { min-height: 44px; min-width: 62px; white-space: nowrap; }
+  .check, .switch { min-height: 48px; }
+  .check .box { width: 28px; height: 28px; }
+
+  /* Slider lebih mudah digeser dengan ibu jari */
+  .range { height: 22px; }
+  .range::-webkit-slider-thumb { width: 36px; height: 36px; }
+  .range::-moz-range-thumb { width: 32px; height: 32px; }
+
+  /* Tautan mandiri (bukan di dalam paragraf) diberi area sentuh penuh */
+  a.t-sm, a.t-xs {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--s-2);
+  }
+  /* Tautan di dalam kalimat cukup diberi ruang vertikal */
+  p a, .t-sm a, .t-xs a, .alert a { padding: 3px 0; }
+}
+
+/* ============================================================
+   4. Tata letak: satu kolom di ponsel
+   ============================================================ */
+@media (max-width: 860px) {
+  .g2, .g3, .g4, .g-2-1, .g-1-2 { grid-template-columns: 1fr !important; }
+  .grid { gap: var(--s-4); }
+
+  /* Kartu lebih rapat agar konten terlihat lebih banyak */
+  .card { padding: var(--s-4); border-radius: var(--r-md); }
+  .card.pad-lg { padding: var(--s-4); }
+  .content { padding: var(--s-4) var(--s-3) var(--s-4); gap: var(--s-4); }
+
+  /* Judul kartu menumpuk bila tombolnya tidak muat */
+  .card-head { flex-wrap: wrap; }
+  .card-head > .seg,
+  .card-head > .row,
+  .card-head > .btn,
+  .card-head > a.btn { flex: 1 1 100%; }
+  .card-head .seg { overflow-x: auto; }
+
+  /* Daftar definisi jadi bertumpuk, bukan dua kolom sempit */
+  .kv { grid-template-columns: 1fr; gap: 2px var(--s-2); }
+  .kv dt { font-size: 12px; color: var(--text-3); margin-top: var(--s-2); }
+  .kv dd { font-size: 14px; margin-bottom: var(--s-1); }
+
+  /* Statistik: dua kolom masih nyaman di ponsel */
+  .grid.g4 > .card,
+  .grid.g3 > .card { min-width: 0; }
+}
+
+/* Statistik ringkas tetap dua kolom supaya padat namun terbaca */
+@media (min-width: 420px) and (max-width: 860px) {
+  section.grid.g4 { grid-template-columns: 1fr 1fr !important; }
+  .grid.g2.gap-2 { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ============================================================
+   5. Navigasi bawah — kunci penggunaan satu tangan
+   ============================================================ */
+.tabbar { display: none; }
+.sidebar .btn-close-drawer { display: none; }
+
+@media (max-width: 960px) {
+  .tabbar {
+    display: flex;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 70;
+    background: var(--surface);
+    box-shadow: 0 -8px 24px -12px var(--sh-dark);
+    padding: var(--s-2) var(--s-2) calc(var(--s-2) + env(safe-area-inset-bottom, 0px));
+    gap: 2px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .tabbar a {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border-radius: var(--r-sm);
+    color: var(--text-3);
+    font-size: 11.5px;
+    font-weight: 650;
+    text-decoration: none;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+  .tabbar a:hover { text-decoration: none; }
+  .tabbar a .tb-ico { display: flex; }
+  .tabbar a span.tb-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tabbar a.active {
+    color: var(--primary-700);
+    background: var(--primary-50);
+  }
+  .tabbar a .tb-dot {
+    position: absolute;
+    top: 6px;
+    margin-left: 20px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+  }
+  .tabbar a { position: relative; }
+
+  /* Ruang bawah agar konten terakhir tidak tertutup tabbar */
+  .main { padding-bottom: 76px; }
+  .footer { padding-bottom: var(--s-4); }
+
+  /* Toast naik ke atas tabbar */
+  .toast-host {
+    right: var(--s-3);
+    left: var(--s-3);
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    max-width: none;
+  }
+}
+
+/* ============================================================
+   6. Topbar & sidebar
+   ============================================================ */
+@media (max-width: 960px) {
+  .topbar {
+    padding: var(--s-3);
+    gap: var(--s-2);
+    min-height: 60px;
+    padding-top: calc(var(--s-3) + env(safe-area-inset-top, 0px));
+  }
+  .topbar h1 { font-size: 18px; }
+  .topbar-sub { display: none; }
+
+  /* Tombol aksi teks di topbar disembunyikan; tersedia di dalam halaman */
+  .topbar > .btn span:not(.sr-only),
+  .topbar > a.btn span:not(.sr-only) { display: none; }
+  .topbar > .btn,
+  .topbar > a.btn {
+    width: 44px; min-width: 44px; padding: 0;
+    justify-content: center;
+  }
+
+  /* Drawer menyisakan area scrim yang cukup lebar untuk ditap.
+     86vw hanya menyisakan ~55px pada layar 393px, terlalu sempit
+     untuk ditutup dengan ibu jari. */
+  .sidebar {
+    width: min(78vw, 300px);
+    padding-top: calc(var(--s-5) + env(safe-area-inset-top, 0px));
+  }
+  .nav-item { min-height: 52px; }
+
+  /* Tombol tutup di dalam drawer: jalur yang pasti, tidak
+     bergantung pada ketepatan tap di area scrim. */
+  .sidebar .btn-close-drawer {
+    display: inline-flex;
+    position: absolute;
+    top: calc(var(--s-4) + env(safe-area-inset-top, 0px));
+    right: var(--s-3);
+    width: 44px; height: 44px;
+    align-items: center; justify-content: center;
+    border: 0; border-radius: var(--r-md);
+    background: var(--surface);
+    box-shadow: var(--nm-1);
+    color: var(--text-2);
+  }
+  .sidebar .brand { padding-right: 52px; }
+}
+
+/* ============================================================
+   7. Tabel: selalu bisa digeser, jangan pecahkan layout
+   ============================================================ */
+@media (max-width: 860px) {
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Petunjuk visual bahwa tabel dapat digeser */
+    background:
+      linear-gradient(to right, var(--bg) 30%, rgba(232,238,247,0)),
+      linear-gradient(to left, var(--bg) 30%, rgba(232,238,247,0)) 100% 0,
+      radial-gradient(farthest-side at 0 50%, rgba(107,127,153,.22), transparent),
+      radial-gradient(farthest-side at 100% 50%, rgba(107,127,153,.22), transparent) 100% 0;
+    background-repeat: no-repeat;
+    background-size: 34px 100%, 34px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+  .table { font-size: 13px; }
+  .table th, .table td { padding: var(--s-3) var(--s-3); }
+
+  /* Baris pasien pada dasbor terapis: tumpuk agar terbaca */
+  .pt-row { grid-template-columns: 1fr; gap: var(--s-2); }
+}
+
+/* ============================================================
+   8. Komponen khusus fitur
+   ============================================================ */
+@media (max-width: 860px) {
+  /* --- Skala nyeri 0-10: dua baris, target besar --- */
+  .pain-scale {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--s-2);
+  }
+  .pain-btn {
+    width: 100%;
+    height: 56px;
+    font-size: 18px;
+  }
+
+  /* --- Peta tubuh: tumpuk di atas daftar zona --- */
+  .bodymap-wrap { grid-template-columns: 1fr; gap: var(--s-4); }
+  .bodymap { max-width: 300px; margin: 0 auto; }
+
+  /* --- Panel perangkat & sesi --- */
+  .device-hero, .session-hero { grid-template-columns: 1fr; }
+  .arm-stage { min-height: 240px; }
+  .arm-stage svg { max-width: 240px; }
+
+  /* --- Kanal EMG: nama kanal dipendekkan --- */
+  .ch-row { grid-template-columns: 74px 1fr 46px; gap: var(--s-2); }
+  .ch-name { font-size: 12px; }
+  .ch-val { font-size: 12px; }
+
+  /* --- Pola cengkeram: dua kolom --- */
+  .grip-grid { grid-template-columns: repeat(2, 1fr); }
+  .grip-opt { min-height: 84px; }
+
+  /* --- Pad haptik: sebar merata --- */
+  .haptic-pads { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--s-2); }
+  .haptic-pad { width: 100%; height: 52px; }
+
+  /* --- Kalender: petak lebih kecil namun tetap tersentuh --- */
+  .cal { gap: 3px; }
+  .cal-cell { min-height: 52px; padding: 4px; border-radius: var(--r-xs); }
+  .cal-cell .cd { font-size: 12px; }
+  .cal-cell .cdot { width: 5px; height: 5px; }
+
+  /* --- Wizard kalibrasi: langkah menumpuk --- */
+  .steps { gap: var(--s-1); }
+  .step-dot .sd { width: 28px; height: 28px; }
+  .step-line { min-width: 8px; }
+
+  /* --- GMI: tombol jawaban besar --- */
+  .lat-answer { grid-template-columns: 1fr 1fr; gap: var(--s-3); }
+  .lat-btn { min-height: 68px; font-size: 16px; }
+  .lat-stage { min-height: 230px; }
+  .lat-stage svg { width: 140px; }
+
+  /* --- Diskriminasi sensorik --- */
+  .sd-grid { grid-template-columns: repeat(4, 1fr); max-width: 100%; }
+
+  /* --- Terapi cermin --- */
+  .mirror-stage { aspect-ratio: 3 / 4; }
+  .mirror-hint { font-size: 12.5px; padding: var(--s-2) var(--s-3); }
+
+  /* --- Jadwal --- */
+  .sched-item { gap: var(--s-3); padding: var(--s-3); flex-wrap: wrap; }
+  .sched-time { min-width: 54px; }
+
+  /* --- Notifikasi --- */
+  .notif-item { padding: var(--s-3); }
+  .notif-item .row.gap-2 { flex-wrap: wrap; }
+
+  /* --- Pemilih peran pada halaman masuk --- */
+  .role-pick { grid-template-columns: 1fr; }
+
+  /* --- Peta panas: geser horizontal --- */
+  .heat { gap: 3px; }
+  .heat-cell { width: 13px; height: 13px; }
+
+  /* --- Grafik lebih pendek agar tidak mendominasi layar --- */
+  .chart-box canvas { max-height: 260px; }
+}
+
+/* ============================================================
+   9. Halaman masuk pada ponsel
+   ============================================================ */
+@media (max-width: 900px) {
+  .auth-wrap { grid-template-columns: 1fr; min-height: 100vh; }
+  .auth-form-side {
+    padding: var(--s-5) var(--s-3);
+    padding-top: calc(var(--s-5) + env(safe-area-inset-top, 0px));
+    align-items: start;
+  }
+  .auth-card { width: 100%; max-width: 460px; }
+
+  /* Ringkasan produk versi ringkas, menggantikan panel kiri */
+  .auth-mobile-hero {
+    display: block;
+    text-align: center;
+    margin-bottom: var(--s-5);
+  }
+  .auth-mobile-hero .mark {
+    width: 64px; height: 64px; margin: 0 auto var(--s-3);
+    border-radius: 20px;
+    background: linear-gradient(145deg, var(--primary-400), var(--primary-700));
+    display: grid; place-items: center;
+    box-shadow: var(--nm-1);
+  }
+  .auth-mobile-hero .nm {
+    font-size: 30px; font-weight: 750; letter-spacing: .12em; color: var(--primary-700);
+    line-height: 1;
+  }
+  .auth-mobile-hero .tg {
+    font-size: 12px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--text-3); margin-top: 6px;
+  }
+  .auth-mobile-hero p {
+    font-size: 14px; color: var(--text-2); margin-top: var(--s-3);
+    max-width: 40ch; margin-inline: auto; line-height: 1.5;
+  }
+}
+.auth-mobile-hero { display: none; }
+
+/* ============================================================
+   10. Modal: lembar bawah pada ponsel
+   ============================================================ */
+@media (max-width: 700px) {
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal, .modal.sm, .modal.lg {
+    width: 100%;
+    max-width: none;
+    max-height: 92vh;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    padding: var(--s-5) var(--s-4)
+             calc(var(--s-5) + env(safe-area-inset-bottom, 0px));
+    animation: sheet-up var(--t-slow) both;
+  }
+  @keyframes sheet-up {
+    from { transform: translateY(100%); }
+    to { transform: none; }
+  }
+  /* Pegangan lembar */
+  .modal::before {
+    content: "";
+    display: block;
+    width: 42px; height: 4px;
+    border-radius: 2px;
+    background: var(--sh-dark);
+    margin: 0 auto var(--s-4);
+  }
+  /* Aksi modal melebar penuh, mudah dijangkau ibu jari */
+  .modal .row.between.mt-5 { flex-direction: column-reverse; gap: var(--s-2); }
+  .modal .row.between.mt-5 > .row { width: 100%; flex-direction: column; gap: var(--s-2); }
+  .modal .row.between.mt-5 .btn { width: 100%; min-height: 50px; }
+}
+
+/* ============================================================
+   11. Tombol aksi utama melebar penuh
+   ============================================================ */
+@media (max-width: 600px) {
+  .card > .row.gap-2 > .btn,
+  .card > .row.gap-3 > .btn { flex: 1 1 100%; }
+  .btn-lg { min-height: 54px; width: 100%; }
+  .btn-group { width: 100%; }
+  .btn-group .btn { flex: 1 1 auto; }
+
+  /* Baris tombol pada sesi latihan */
+  .session-hero .row.gap-2.wrap .btn { flex: 1 1 100%; }
+}
+
+/* ============================================================
+   12. Landscape rendah: hemat ruang vertikal
+   ============================================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .tabbar { padding: 2px; }
+  .tabbar a { min-height: 44px; font-size: 10.5px; }
+  .main { padding-bottom: 58px; }
+  .topbar { min-height: 52px; }
+  .arm-stage { min-height: 180px; }
+}
+
+/* ============================================================
+   13. Aksesibilitas: mode satu tangan
+   Diaktifkan dari Pengaturan; menaikkan seluruh target sentuh
+   dan menempatkan aksi utama dalam jangkauan ibu jari.
+   ============================================================ */
+body.one-hand {
+  --touch: 54px;
+  --touch-lg: 64px;
+}
+@media (max-width: 960px) {
+  body.one-hand .btn { min-height: 54px; }
+  body.one-hand .btn-sm { min-height: 48px; }
+  body.one-hand .btn-lg { min-height: 60px; }
+  body.one-hand .tabbar a { min-height: 62px; font-size: 12px; }
+  body.one-hand .main { padding-bottom: 86px; }
+  body.one-hand .pain-btn { height: 62px; }
+  body.one-hand .input, body.one-hand .select { min-height: 54px; }
+  body.one-hand .cal-cell { min-height: 58px; }
+}
+
+/* ============================================================
+   14. Cetak: sembunyikan navigasi bawah
+   ============================================================ */
+@media print {
+  .tabbar { display: none !important; }
+  .main { padding-bottom: 0; }
+}

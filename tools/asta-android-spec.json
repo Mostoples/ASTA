@@ -1,0 +1,176 @@
+{
+  "name": "ASTA Demo Android Portrait",
+  "ratio": "9:16",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "tracks": [
+    {
+      "type": "video",
+      "name": "adegan",
+      "items": [
+        {
+          "path": "../video-android-clips/adegan-01.mp4",
+          "start": 0,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-02.mp4",
+          "start": 4,
+          "duration": 5,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-03.mp4",
+          "start": 9,
+          "duration": 7,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-04.mp4",
+          "start": 16,
+          "duration": 5,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-05.mp4",
+          "start": 21,
+          "duration": 7,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-06.mp4",
+          "start": 28,
+          "duration": 6,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-07.mp4",
+          "start": 34,
+          "duration": 6,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-08.mp4",
+          "start": 40,
+          "duration": 5,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-09.mp4",
+          "start": 45,
+          "duration": 8,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-10.mp4",
+          "start": 53,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-11.mp4",
+          "start": 57,
+          "duration": 6,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-12.mp4",
+          "start": 63,
+          "duration": 6,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-13.mp4",
+          "start": 69,
+          "duration": 7,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-14.mp4",
+          "start": 76,
+          "duration": 5,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-15.mp4",
+          "start": 81,
+          "duration": 7,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-16.mp4",
+          "start": 88,
+          "duration": 6,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-17.mp4",
+          "start": 94,
+          "duration": 7,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-18.mp4",
+          "start": 101,
+          "duration": 7,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-19.mp4",
+          "start": 108,
+          "duration": 7,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-20.mp4",
+          "start": 115,
+          "duration": 7,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-21.mp4",
+          "start": 122,
+          "duration": 6,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-22.mp4",
+          "start": 128,
+          "duration": 6,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-android-clips/adegan-23.mp4",
+          "start": 134,
+          "duration": 5,
+          "width": 1080,
+          "height": 1920
+        }
+      ]
+    }
+  ]
+}

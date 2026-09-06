@@ -1,0 +1,19 @@
+# Normalkan akhiran baris di dalam repositori (LF), apa pun sistem operasinya.
+# Tanpa ini, checkout di Windows menghasilkan diff palsu pada seluruh berkas.
+* text=auto eol=lf
+
+# Berkas biner: jangan pernah diutak-atik Git
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.webp   binary
+*.mp4    binary
+*.glb    binary
+*.blend  binary
+*.ttf    binary
+*.woff   binary
+*.woff2  binary
+
+# three.js di-vendor apa adanya; jangan hitung sebagai kode proyek
+# dan jangan tampilkan diff-nya secara bawaan.
+js/vendor/** linguist-vendored

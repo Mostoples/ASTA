@@ -1,0 +1,127 @@
+{
+  "name": "ASTA Telerehabilitasi Portrait",
+  "ratio": "9:16",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "tracks": [
+    {
+      "type": "video",
+      "name": "tampilan",
+      "items": [
+        {
+          "path": "../video-frames/frame-01.png",
+          "start": 0,
+          "duration": 4.5,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-02.png",
+          "start": 4.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-03.png",
+          "start": 8.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-04.png",
+          "start": 12.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-05.png",
+          "start": 16.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-06.png",
+          "start": 20.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-07.png",
+          "start": 24.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-08.png",
+          "start": 28.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-09.png",
+          "start": 32.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-10.png",
+          "start": 36.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-11.png",
+          "start": 40.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-12.png",
+          "start": 44.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-13.png",
+          "start": 48.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-14.png",
+          "start": 52.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-15.png",
+          "start": 56.5,
+          "duration": 4,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "path": "../video-frames/frame-16.png",
+          "start": 60.5,
+          "duration": 5.5,
+          "width": 1080,
+          "height": 1920
+        }
+      ]
+    }
+  ]
+}

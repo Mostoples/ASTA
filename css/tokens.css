@@ -1,0 +1,142 @@
+/* ============================================================
+   ASTA — Design Tokens
+   Tema: Biru & Putih, Neumorphism, gaya medis/klinis
+   ============================================================ */
+
+:root {
+  /* ---- Warna dasar (biru pucat = kanvas neumorphism) ---- */
+  --bg: #e8eef7;
+  --bg-deep: #dde5f0;
+  --surface: #edf2f9;
+  --surface-alt: #f5f8fc;
+  --white: #ffffff;
+
+  /* ---- Bayangan neumorphic ---- */
+  --sh-light: #ffffff;
+  --sh-dark: #c3d0e2;
+  --sh-dark-soft: #d2dcea;
+
+  --nm-1: 4px 4px 9px var(--sh-dark), -4px -4px 9px var(--sh-light);
+  --nm-2: 7px 7px 16px var(--sh-dark), -7px -7px 16px var(--sh-light);
+  --nm-3: 12px 12px 26px var(--sh-dark), -10px -10px 22px var(--sh-light);
+  --nm-in: inset 4px 4px 9px var(--sh-dark), inset -4px -4px 9px var(--sh-light);
+  --nm-in-soft: inset 2px 2px 5px var(--sh-dark-soft), inset -2px -2px 5px var(--sh-light);
+  --nm-flat: 2px 2px 5px var(--sh-dark), -2px -2px 5px var(--sh-light);
+
+  /* ---- Aksen biru medis ---- */
+  --primary-50: #eaf2ff;
+  --primary-100: #d3e4ff;
+  --primary-200: #a8c8ff;
+  --primary-300: #77a7fb;
+  --primary-400: #4a87f2;
+  --primary: #2b6cde;
+  --primary-600: #1f57bb;
+  --primary-700: #17428f;
+  --primary-800: #0f2f68;
+  --primary-900: #0a2148;
+
+  /* ---- Warna status klinis ---- */
+  --teal: #10a5a5;
+  --teal-soft: #d6f2f2;
+  --success: #1c9e6b;
+  --success-soft: #d8f3e7;
+  --warning: #d98b0b;
+  --warning-soft: #fdf0d6;
+  --danger: #d64545;
+  --danger-soft: #fbdede;
+  --violet: #7a5af8;
+  --violet-soft: #e9e3ff;
+
+  /* ---- Skala nyeri (0-10) ---- */
+  --pain-0: #1c9e6b;
+  --pain-3: #8cbf3f;
+  --pain-5: #d9b40b;
+  --pain-7: #e07a1f;
+  --pain-10: #d63a3a;
+
+  /* ---- Teks ---- */
+  --text: #16233a;
+  --text-2: #40546f;
+  --text-3: #6b7f99;
+  --text-inv: #f4f8ff;
+
+  /* ---- Garis ---- */
+  --line: #d6e0ee;
+  --line-soft: #e3eaf4;
+
+  /* ---- Radius (neumorphism butuh radius besar) ---- */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-xl: 34px;
+  --r-pill: 999px;
+
+  /* ---- Spasi ---- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 22px;
+  --s-6: 30px;
+  --s-7: 42px;
+
+  /* ---- Tipografi ---- */
+  --font: "Segoe UI", Inter, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+  --fs-xs: 11.5px;
+  --fs-sm: 13px;
+  --fs-md: 14.5px;
+  --fs-lg: 17px;
+  --fs-xl: 22px;
+  --fs-2xl: 28px;
+  --fs-3xl: 36px;
+
+  /* ---- Layout ---- */
+  --sidebar-w: 254px;
+  --topbar-h: 68px;
+  --content-max: 1320px;
+
+  /* ---- Motion ---- */
+  --t-fast: 120ms ease;
+  --t: 200ms cubic-bezier(.22, .61, .36, 1);
+  --t-slow: 380ms cubic-bezier(.22, .61, .36, 1);
+
+  /* ---- Aksesibilitas: target sentuh satu tangan ---- */
+  --touch: 48px;
+  --touch-lg: 60px;
+}
+
+/* Mode kontras tinggi (untuk aksesibilitas pasien) */
+body.contrast-high {
+  --bg: #ffffff;
+  --bg-deep: #f2f6fc;
+  --surface: #ffffff;
+  --surface-alt: #ffffff;
+  --sh-light: #ffffff;
+  --sh-dark: #8ea6c6;
+  --text: #000814;
+  --text-2: #17273d;
+  --text-3: #33475f;
+  --line: #96acc9;
+  --primary: #10429b;
+}
+
+/* Mode teks besar */
+body.text-lg {
+  --fs-xs: 13px;
+  --fs-sm: 15px;
+  --fs-md: 17px;
+  --fs-lg: 20px;
+  --fs-xl: 25px;
+  --fs-2xl: 32px;
+  --fs-3xl: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast: 1ms;
+    --t: 1ms;
+    --t-slow: 1ms;
+  }
+}

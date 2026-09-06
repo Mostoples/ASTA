@@ -1,0 +1,170 @@
+[
+  {
+    "n": "01",
+    "file": "01-halaman-masuk.png",
+    "title": "Halaman Masuk",
+    "page": "index.html",
+    "role": null,
+    "h": 1920
+  },
+  {
+    "n": "02",
+    "file": "02-dasbor-pasien.png",
+    "title": "Dasbor Pasien",
+    "page": "pasien-dashboard.html",
+    "role": "pasien",
+    "h": 3192
+  },
+  {
+    "n": "03",
+    "file": "03-sesi-latihan-persiapan.png",
+    "title": "Sesi Latihan — Persiapan",
+    "page": "sesi-latihan.html",
+    "role": "pasien",
+    "h": 1920
+  },
+  {
+    "n": "04",
+    "file": "04-sesi-latihan-berjalan.png",
+    "title": "Sesi Latihan — Berjalan",
+    "page": "sesi-latihan.html",
+    "role": "pasien",
+    "h": 1920
+  },
+  {
+    "n": "05",
+    "file": "05-catatan-nyeri-phantom.png",
+    "title": "Catatan Nyeri Phantom",
+    "page": "catatan-nyeri.html",
+    "role": "pasien",
+    "h": 6473
+  },
+  {
+    "n": "06",
+    "file": "06-terapi-cermin-gmi.png",
+    "title": "Terapi Cermin & GMI",
+    "page": "terapi-phantom.html",
+    "role": "pasien",
+    "h": 1920
+  },
+  {
+    "n": "07",
+    "file": "07-gmi-pengenalan-sisi.png",
+    "title": "GMI — Pengenalan Sisi",
+    "page": "terapi-phantom.html",
+    "role": "pasien",
+    "h": 1920
+  },
+  {
+    "n": "08",
+    "file": "08-progres-analisis-fase-a-b-a.png",
+    "title": "Progres & Analisis Fase A-B-A",
+    "page": "progres.html",
+    "role": "pasien",
+    "h": 4304
+  },
+  {
+    "n": "09",
+    "file": "09-perangkat-sinyal-emg.png",
+    "title": "Perangkat & Sinyal EMG",
+    "page": "perangkat.html",
+    "role": "pasien",
+    "h": 3918
+  },
+  {
+    "n": "10",
+    "file": "10-kalibrasi-tuning.png",
+    "title": "Kalibrasi & Tuning",
+    "page": "kalibrasi.html",
+    "role": "pasien",
+    "h": 2776
+  },
+  {
+    "n": "11",
+    "file": "11-jadwal-pengingat.png",
+    "title": "Jadwal & Pengingat",
+    "page": "jadwal.html",
+    "role": "pasien",
+    "h": 2850
+  },
+  {
+    "n": "12",
+    "file": "12-notifikasi.png",
+    "title": "Notifikasi",
+    "page": "notifikasi.html",
+    "role": "pasien",
+    "h": 2050
+  },
+  {
+    "n": "13",
+    "file": "13-persetujuan-privasi.png",
+    "title": "Persetujuan & Privasi",
+    "page": "pengaturan.html",
+    "role": "pasien",
+    "h": 1920
+  },
+  {
+    "n": "14",
+    "file": "14-dasbor-klinis-terapis.png",
+    "title": "Dasbor Klinis Terapis",
+    "page": "terapis-dashboard.html",
+    "role": "terapis",
+    "h": 2719
+  },
+  {
+    "n": "15",
+    "file": "15-detail-pasien.png",
+    "title": "Detail Pasien",
+    "page": "terapis-pasien.html",
+    "role": "terapis",
+    "h": 1921
+  },
+  {
+    "n": "16",
+    "file": "16-analisis-fase-per-pasien.png",
+    "title": "Analisis Fase per Pasien",
+    "page": "terapis-pasien.html",
+    "role": "terapis",
+    "h": 1920
+  },
+  {
+    "n": "17",
+    "file": "17-resep-program-latihan.png",
+    "title": "Resep Program Latihan",
+    "page": "terapis-program.html",
+    "role": "terapis",
+    "h": 4366
+  },
+  {
+    "n": "18",
+    "file": "18-pemantauan-kepatuhan.png",
+    "title": "Pemantauan Kepatuhan",
+    "page": "terapis-kepatuhan.html",
+    "role": "terapis",
+    "h": 3732
+  },
+  {
+    "n": "19",
+    "file": "19-pemantauan-nyeri-lintas-pasien.png",
+    "title": "Pemantauan Nyeri Lintas Pasien",
+    "page": "terapis-nyeri.html",
+    "role": "terapis",
+    "h": 4430
+  },
+  {
+    "n": "20",
+    "file": "20-dasbor-teknis-prostetis.png",
+    "title": "Dasbor Teknis Prostetis",
+    "page": "prostetis-dashboard.html",
+    "role": "prostetis",
+    "h": 3132
+  },
+  {
+    "n": "21",
+    "file": "21-dasbor-admin.png",
+    "title": "Dasbor Admin",
+    "page": "admin-dashboard.html",
+    "role": "admin",
+    "h": 2796
+  }
+]

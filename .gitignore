@@ -1,0 +1,21 @@
+# ---- Dependensi ----
+node_modules/
+
+# ---- Cache deploy Firebase ----
+# Dibuat ulang setiap `firebase deploy`; tidak bermakna di dalam riwayat.
+.firebase/
+
+# ---- Berkas cadangan otomatis ----
+# Blender menulis .blend1 tiap menyimpan; alat CapCut menulis .bak.
+*.blend1
+*.bak
+
+# ---- Sampah sistem operasi ----
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+
+# ---- Log ----
+*.log
+firebase-debug.log

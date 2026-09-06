@@ -1,0 +1,114 @@
+[
+  {
+    "index": 1,
+    "file": "frame-01.png",
+    "title": "ASTA",
+    "sub": "Telerehabilitasi lengan bionik non-invasif",
+    "kicker": "Pembuka"
+  },
+  {
+    "index": 2,
+    "file": "frame-02.png",
+    "title": "Dasbor Pasien",
+    "sub": "Kepatuhan, jadwal terapi, dan status alat dalam satu layar",
+    "kicker": "Pasien"
+  },
+  {
+    "index": 3,
+    "file": "frame-03.png",
+    "title": "Sinyal Otot Menggerakkan Lengan",
+    "sub": "Empat kanal sEMG diterjemahkan menjadi pola cengkeram dan gaya",
+    "kicker": "Hardware"
+  },
+  {
+    "index": 4,
+    "file": "frame-04.png",
+    "title": "Kalibrasi Terpandu",
+    "sub": "Baseline dan kontraksi maksimum menentukan ambang tiap kanal",
+    "kicker": "Hardware"
+  },
+  {
+    "index": 5,
+    "file": "frame-05.png",
+    "title": "Repetisi Terhitung Otomatis",
+    "sub": "Mutu gerak dinilai dari kehalusan dan durasi tahan kontraksi",
+    "kicker": "Latihan"
+  },
+  {
+    "index": 6,
+    "file": "frame-06.png",
+    "title": "Catatan Nyeri Phantom",
+    "sub": "Skala NRS, peta tubuh interaktif, pemicu, dan dampak tidur",
+    "kicker": "Phantom Pain"
+  },
+  {
+    "index": 7,
+    "file": "frame-07.png",
+    "title": "Terapi Cermin Digital",
+    "sub": "Umpan balik visual pada posisi lengan yang diamputasi",
+    "kicker": "Phantom Pain"
+  },
+  {
+    "index": 8,
+    "file": "frame-08.png",
+    "title": "Graded Motor Imagery",
+    "sub": "Pengenalan sisi kiri-kanan melatih ulang peta motorik",
+    "kicker": "Phantom Pain"
+  },
+  {
+    "index": 9,
+    "file": "frame-09.png",
+    "title": "Analisis Fase A-B-A",
+    "sub": "Nyeri naik saat haptik dicabut, turun lagi saat dipasang",
+    "kicker": "Bukti"
+  },
+  {
+    "index": 10,
+    "file": "frame-10.png",
+    "title": "Jadwal & Pengingat Berjenjang",
+    "sub": "Eskalasi otomatis ke terapis bila latihan lama terlewat",
+    "kicker": "Kepatuhan"
+  },
+  {
+    "index": 11,
+    "file": "frame-11.png",
+    "title": "Dasbor Klinis Terapis",
+    "sub": "Triase pasien menurut risiko putus terapi",
+    "kicker": "Klinis"
+  },
+  {
+    "index": 12,
+    "file": "frame-12.png",
+    "title": "Skor Kepatuhan Komposit",
+    "sub": "Frekuensi, kelengkapan, dan pemakaian alat dari telemetri",
+    "kicker": "Klinis"
+  },
+  {
+    "index": 13,
+    "file": "frame-13.png",
+    "title": "Efek Haptik Lintas Pasien",
+    "sub": "Perbandingan nyeri antar fase beserta ukuran efek",
+    "kicker": "Bukti"
+  },
+  {
+    "index": 14,
+    "file": "frame-14.png",
+    "title": "Dasbor Teknis Prostetis",
+    "sub": "Mutu sinyal, kondisi socket, dan jadwal servis armada",
+    "kicker": "Klinis"
+  },
+  {
+    "index": 15,
+    "file": "frame-15.png",
+    "title": "Persetujuan & Jejak Audit",
+    "sub": "Hak menarik diri dan catatan setiap akses data",
+    "kicker": "Etik"
+  },
+  {
+    "index": 16,
+    "file": "frame-16.png",
+    "title": "18 Halaman, 4 Peran",
+    "sub": "Pasien, fisioterapis, prostetis, dan admin klinik",
+    "kicker": "Penutup"
+  }
+]

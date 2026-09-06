@@ -1,0 +1,93 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "firebase-debug.log",
+      ".firebase/**",
+      ".firebaserc",
+      "**/.*",
+      "**/node_modules/**",
+      "**/.vscode/**",
+      "README.md",
+      "screenshots/**",
+      "screenshots-mobile/**",
+      "screenshots-android/**",
+      "video-frames/**",
+      "video-android/**",
+      "video-android-clips/**",
+      "capcut-project/**",
+      "capcut-project-android/**",
+      "assets/render/turntable/**",
+      "assets/render/pose/**",
+      "**/*.blend1",
+      "tools/**",
+      "*.mp4"
+    ],
+    "cleanUrls": false,
+    "trailingSlash": false,
+    "appAssociation": "NONE",
+    "headers": [
+      {
+        "source": "**/*.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, must-revalidate"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "Permissions-Policy",
+            "value": "camera=(self), microphone=(self), bluetooth=(self)"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(css|js)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(glb|blend)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=604800, immutable"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          }
+        ]
+      },
+      {
+        "source": "assets/render/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=604800, immutable"
+          }
+        ]
+      }
+    ]
+  }
+}
