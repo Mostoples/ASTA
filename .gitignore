@@ -40,3 +40,10 @@ video-showreel-clips/
 # ratusan MB sampai GB dan bukan bagian dari kode aplikasi.
 ASTA rekaman/
 ASTA rekaman MP4/
+ASTA REKAMAN FIX/
+ASTA REKAMAN FIX MP4/
+
+# ---- Video semifinal ----
+# Hasil build.py (±160 MB) dan dapat dibangun ulang dari materi rekaman;
+# yang disimpan hanyalah skrip perakitnya di tools/asta-video/.
+ASTA - Video Semifinal HRIE 2026.mp4

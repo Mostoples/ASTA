@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ASTA — kartu grafis video</title>
+<!--
+  Pembangkit kartu dan overlay untuk video semifinal HRIE 2026.
+
+  Dirender 1920x1080 oleh render-cards.js. Kartu bertipe "overlay"
+  dibuat berlatar transparan supaya bisa ditumpuk di atas footage;
+  kartu penuh memakai latar terang agar menyambung dengan animasi
+  logo ASTA dan footage produk yang berlatar putih.
+
+  Parameter kueri:
+    card   id kartu, lihat objek CARDS di bawah
+    n      angka pembantu (mis. jumlah poin yang sudah tampil)
+-->
+<style>
+  :root{
+    --navy:#134896;         /* diambil dari logo ASTA */
+    --navy-2:#0d3068;
+    --blue:#2f7fe0;
+    --sky:#d6f0ff;          /* warna latar akhir animasi opening */
+    --amber:#f2a71b;
+    --ink:#0e2038;
+    --paper:#ffffff;
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;width:1920px;height:1080px;overflow:hidden;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    color:var(--ink);text-rendering:geometricPrecision;
+  }
+  body.solid{
+    background:
+      radial-gradient(1200px 820px at 14% -12%, #eaf6ff 0%, transparent 60%),
+      radial-gradient(900px 700px at 98% 110%, #e2f1ff 0%, transparent 55%),
+      linear-gradient(160deg,#ffffff 0%,#f3f9ff 58%,#eaf4ff 100%);
+  }
+  /* Overlay: latar benar-benar transparan (screenshot omitBackground) */
+  body.over{background:transparent}
+
+  .wrap{position:absolute;inset:0;padding:96px 150px;display:flex;
+        flex-direction:column;justify-content:center}
+
+  .eyebrow{font-size:19px;letter-spacing:.32em;text-transform:uppercase;
+           font-weight:800;color:var(--blue)}
+  h2{font-size:68px;line-height:1.06;letter-spacing:-.028em;font-weight:800;
+     margin:22px 0 0;max-width:20ch;color:var(--navy-2)}
+  .lead{margin:22px 0 0;font-size:26px;line-height:1.5;max-width:56ch;
+        color:#3c5878;font-weight:400}
+  .rule{width:92px;height:6px;border-radius:4px;margin:30px 0 0;
+        background:linear-gradient(90deg,var(--navy),var(--blue))}
+
+  /* ---------- kartu judul ---------- */
+  .title{align-items:center;text-align:center;justify-content:center}
+  .title .logo{width:430px;margin-bottom:6px}
+  .title h1{font-size:40px;letter-spacing:.06em;font-weight:800;margin:16px 0 0;
+            color:var(--navy-2);max-width:26ch;line-height:1.22}
+  .title .sub{margin-top:20px;font-size:25px;color:#44618a;font-weight:500}
+  .title .meta{margin-top:44px;font-size:20px;letter-spacing:.16em;
+               text-transform:uppercase;font-weight:700;color:#6d86a8}
+  .title .bar{width:120px;height:6px;border-radius:4px;margin:34px auto 0;
+              background:linear-gradient(90deg,var(--navy),var(--amber))}
+
+  /* ---------- kata besar (overlay) ---------- */
+  .word{position:absolute;left:0;right:0;bottom:132px;text-align:center}
+  .word b{display:inline-block;font-size:96px;font-weight:800;letter-spacing:-.02em;
+          color:#fff;padding:16px 54px;border-radius:20px;
+          background:rgba(13,48,104,.82);
+          text-shadow:0 4px 22px rgba(0,0,0,.35)}
+
+  /* ---------- daftar bernomor ---------- */
+  .rows{display:grid;gap:26px;margin-top:52px;max-width:1380px}
+  .rows .row{display:grid;grid-template-columns:78px 1fr;gap:30px;align-items:start;
+             padding:26px 0;border-top:2px solid rgba(19,72,150,.16)}
+  .rows .k{font-size:36px;font-weight:800;color:var(--blue);line-height:1.05}
+  .rows h3{font-size:32px;margin:0;font-weight:700;color:var(--navy-2)}
+  .rows p{margin:10px 0 0;font-size:21px;line-height:1.5;color:#4a678a;max-width:66ch}
+
+  /* ---------- langkah berjajar ---------- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+  .steps .st{padding:30px 28px 32px;border-radius:20px;background:#fff;
+             border:2px solid rgba(19,72,150,.14);
+             box-shadow:0 18px 40px -26px rgba(19,72,150,.5)}
+  .steps .n{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;
+            font-size:19px;font-weight:800;color:#fff;
+            background:linear-gradient(140deg,var(--blue),var(--navy))}
+  .steps h3{font-size:25px;margin:20px 0 0;font-weight:700;color:var(--navy-2)}
+  .steps p{margin:9px 0 0;font-size:18px;line-height:1.45;color:#4a678a}
+
+  /* ---------- chip subsistem ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:18px;margin-top:52px;max-width:1500px}
+  .chips b{font-size:26px;font-weight:700;padding:18px 32px;border-radius:999px;
+           color:var(--navy-2);background:#fff;border:2px solid rgba(19,72,150,.2);
+           box-shadow:0 14px 30px -22px rgba(19,72,150,.6)}
+
+  /* ---------- poin empat fokus (overlay bawah) ---------- */
+  .focus{position:absolute;left:96px;bottom:92px;display:grid;gap:14px}
+  .focus .f{display:flex;align-items:center;gap:18px;padding:14px 30px 14px 18px;
+            border-radius:14px;background:rgba(255,255,255,.94);
+            border-left:8px solid var(--blue);
+            box-shadow:0 16px 34px -20px rgba(6,24,48,.75);
+            font-size:27px;font-weight:650;color:var(--navy-2)}
+  .focus .f.off{opacity:.22}
+  .focus .f i{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+              font-size:17px;font-weight:800;font-style:normal;color:#fff;
+              background:linear-gradient(140deg,var(--blue),var(--navy))}
+  .focus .f.off i{background:#9fb3cc}
+
+  /* ---------- lower third ---------- */
+  .lt{position:absolute;left:96px;bottom:96px;display:flex;align-items:stretch;
+      border-radius:16px;overflow:hidden;
+      box-shadow:0 20px 44px -22px rgba(6,24,48,.8)}
+  .lt .accent{width:12px;background:linear-gradient(180deg,var(--blue),var(--navy))}
+  .lt .body{background:rgba(255,255,255,.95);padding:20px 40px 22px 28px}
+  .lt .step{font-size:15px;letter-spacing:.26em;text-transform:uppercase;
+            font-weight:800;color:var(--blue)}
+  .lt .txt{font-size:38px;font-weight:750;color:var(--navy-2);margin-top:6px;
+           letter-spacing:-.015em}
+  .lt .sub{font-size:20px;color:#5b789c;margin-top:6px;font-weight:400}
+
+  /* ---------- penghitung repetisi ---------- */
+  .reps{position:absolute;right:110px;top:110px;text-align:center;
+        background:rgba(255,255,255,.95);border-radius:22px;padding:26px 44px 30px;
+        box-shadow:0 22px 46px -24px rgba(6,24,48,.8);
+        border:2px solid rgba(19,72,150,.14)}
+  .reps .lbl{font-size:16px;letter-spacing:.26em;text-transform:uppercase;
+             font-weight:800;color:var(--blue)}
+  .reps .num{font-size:96px;font-weight:800;line-height:1;color:var(--navy-2);
+             margin-top:10px;font-variant-numeric:tabular-nums}
+
+  /* ---------- kartu hasil uji ---------- */
+  .sus{display:flex;align-items:center;gap:80px;margin-top:54px}
+  .sus .big{font-size:140px;font-weight:800;line-height:1;color:var(--navy);
+            letter-spacing:-.04em}
+  .sus .big span{display:block;font-size:22px;letter-spacing:.2em;font-weight:800;
+                 color:var(--blue);text-transform:uppercase;margin-top:14px}
+  .sus .txt{font-size:30px;line-height:1.5;color:#3c5878;max-width:24ch;font-weight:500}
+
+  /* ---------- kartu penutup ---------- */
+  .end{align-items:center;text-align:center;justify-content:center}
+  .end .logo{width:360px}
+  .end .tag{margin-top:34px;font-size:44px;font-weight:700;color:var(--navy-2);
+            letter-spacing:.01em}
+  .end .bar{width:110px;height:6px;border-radius:4px;margin:34px auto 0;
+            background:linear-gradient(90deg,var(--navy),var(--amber))}
+  .end .foot{margin-top:40px;font-size:19px;letter-spacing:.18em;text-transform:uppercase;
+             font-weight:700;color:#7189aa}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+var q = new URLSearchParams(location.search);
+var card = q.get('card') || 'title';
+var n = parseInt(q.get('n') || '0', 10);
+var LOGO = 'logo.png';   // disalin ke folder yang sama oleh render-cards.js
+
+function rows(items){
+  return '<div class="rows">' + items.map(function(it,i){
+    return '<div class="row"><div class="k">' + String(i+1).padStart(2,'0') + '</div>' +
+           '<div><h3>' + it[0] + '</h3><p>' + it[1] + '</p></div></div>';
+  }).join('') + '</div>';
+}
+
+var FOKUS = [
+  'Sistem modular yang dapat disesuaikan',
+  'Kontrol berbasis intent',
+  'Umpan balik sensorik',
+  'Pemantauan aktivitas rehabilitasi'
+];
+
+function focusOverlay(upto){
+  return '<div class="focus">' + FOKUS.map(function(f,i){
+    var on = i < upto;
+    return '<div class="f' + (on ? '' : ' off') + '"><i>' + (i+1) + '</i><span>' + f + '</span></div>';
+  }).join('') + '</div>';
+}
+
+function lt(step, txt, sub){
+  return '<div class="lt"><div class="accent"></div><div class="body">' +
+    (step ? '<div class="step">' + step + '</div>' : '') +
+    '<div class="txt">' + txt + '</div>' +
+    (sub ? '<div class="sub">' + sub + '</div>' : '') +
+    '</div></div>';
+}
+
+var CARDS = {
+
+  /* ---------- kartu penuh ---------- */
+
+  title: ['solid',
+    '<div class="wrap title">' +
+      '<img class="logo" src="' + LOGO + '" alt="">' +
+      '<h1>Lengan Bionik Modular Non-Invasif untuk Aktivitas Fungsional dan Rehabilitasi</h1>' +
+      '<div class="sub">Kompetisi Riset dan Produk Inovasi</div>' +
+      '<div class="bar"></div>' +
+      '<div class="meta">Health Research &amp; Innovation Expo 2026</div>' +
+    '</div>'],
+
+  masalah: ['solid',
+    '<div class="wrap">' +
+      '<div class="eyebrow">Latar belakang</div>' +
+      '<h2>Tiga hambatan akses teknologi asistif</h2>' +
+      rows([
+        ['Biaya', 'Lengan prostetik fungsional masih jauh di atas jangkauan sebagian besar penyandang amputasi.'],
+        ['Akses layanan', 'Pusat rehabilitasi dan tenaga prostetis terpusat di kota besar, sehingga kontrol rutin sulit dijalani.'],
+        ['Kebutuhan yang berbeda-beda', 'Setiap pengguna memiliki panjang tungkai sisa, kekuatan otot, dan tujuan rehabilitasi yang tidak sama.']
+      ]) +
+    '</div>'],
+
+  metode: ['solid',
+    '<div class="wrap">' +
+      '<div class="eyebrow">Metode pengembangan</div>' +
+      '<h2>User-Centered Design &amp; Agile Development</h2>' +
+      '<div class="steps">' +
+        '<div class="st"><div class="n">1</div><h3>Konsultasi</h3>' +
+          '<p>Penyandang amputasi, fisioterapis, serta prostetis dan ortotis.</p></div>' +
+        '<div class="st"><div class="n">2</div><h3>Identifikasi kebutuhan</h3>' +
+          '<p>Temuan lapangan dirumuskan menjadi kebutuhan yang terukur.</p></div>' +
+        '<div class="st"><div class="n">3</div><h3>Desain</h3>' +
+          '<p>Kebutuhan diterjemahkan ke rancangan mekanik dan elektronik.</p></div>' +
+        '<div class="st"><div class="n">4</div><h3>Pemrograman</h3>' +
+          '<p>Sistem kontrol, sensor, dan aplikasi pemantauan dibangun.</p></div>' +
+        '<div class="st"><div class="n">5</div><h3>Perakitan</h3>' +
+          '<p>Komponen cetak 3D dan elektronik disatukan menjadi purwarupa.</p></div>' +
+        '<div class="st"><div class="n">6</div><h3>Pengujian &amp; evaluasi</h3>' +
+          '<p>Hasil uji kembali menjadi masukan untuk iterasi berikutnya.</p></div>' +
+      '</div>' +
+    '</div>'],
+
+  integrasi: ['solid',
+    '<div class="wrap">' +
+      '<div class="eyebrow">Hasil pengembangan</div>' +
+      '<h2>Lima sistem yang terintegrasi dalam satu lengan</h2>' +
+      '<div class="chips">' +
+        ['Sistem mekanik','Sistem kontrol','Sensor','Umpan balik sensorik','Pemantauan lewat aplikasi']
+          .map(function(s){ return '<b>' + s + '</b>'; }).join('') +
+      '</div>' +
+      '<p class="lead" style="margin-top:46px">Modular dan non-invasif — tanpa operasi, tanpa implan, ' +
+      'dan setiap bagian dapat dicetak ulang serta ditukar sendiri.</p>' +
+    '</div>'],
+
+  sus: ['solid',
+    '<div class="wrap">' +
+      '<div class="eyebrow">Hasil pengujian</div>' +
+      '<h2>System Usability Scale</h2>' +
+      '<div class="sus">' +
+        '<div class="big">SUS<span>instrumen uji</span></div>' +
+        '<div class="txt">Hasil pengujian menunjukkan produk <b>layak untuk dipakai</b> ' +
+        'oleh pengguna sasaran.</div>' +
+      '</div>' +
+    '</div>'],
+
+  end: ['solid',
+    '<div class="wrap end">' +
+      '<img class="logo" src="' + LOGO + '" alt="">' +
+      '<div class="tag">Move with Purpose.</div>' +
+      '<div class="bar"></div>' +
+      '<div class="foot">Purwarupa penelitian &middot; HRIE 2026</div>' +
+    '</div>'],
+
+  /* ---------- overlay transparan ---------- */
+
+  'kata-menggenggam': ['over', '<div class="word"><b>MENGGENGGAM</b></div>'],
+  'kata-mengangkat':  ['over', '<div class="word"><b>MENGANGKAT</b></div>'],
+  'kata-menjangkau':  ['over', '<div class="word"><b>MENJANGKAU</b></div>'],
+
+  fokus:   ['over', focusOverlay(n)],
+  reps:    ['over', '<div class="reps"><div class="lbl">Repetisi</div>' +
+                    '<div class="num">' + String(n).padStart(2,'0') + '</div></div>'],
+
+  'lt-leader':    ['over', lt('Tim ASTA', 'Team Leader', '')],
+  'lt-research-a':['over', lt('Tim ASTA', 'Researcher', '')],
+  'lt-research-b':['over', lt('Tim ASTA', 'Researcher', '')],
+  'lt-software':  ['over', lt('Tim ASTA', 'Software Engineer', '')],
+  'lt-it':        ['over', lt('Tim ASTA', 'IT Engineer', '')],
+  'lt-iot':       ['over', lt('Tim ASTA', 'IoT Engineer', '')],
+
+  'cap-13a': ['over', lt('Cara kerja · 1 dari 6', 'Socket modular', 'Disesuaikan dengan tungkai sisa pengguna')],
+  'cap-13b': ['over', lt('Cara kerja · 2 dari 6', 'Kontrol berbasis intent', 'Input pengguna menjadi perintah gerakan')],
+  'cap-13c': ['over', lt('Cara kerja · 3 dari 6', 'Deteksi kontak', 'Sensor mengenali sentuhan dengan objek')],
+  'cap-13d': ['over', lt('Cara kerja · 4 dari 6', 'Umpan balik sensorik', 'Informasi kontak dikembalikan ke pengguna')],
+  'cap-13e': ['over', lt('Cara kerja · 5 dari 6', 'Hitung repetisi', 'Latihan rehabilitasi tercatat otomatis')],
+  'cap-13f': ['over', lt('Cara kerja · 6 dari 6', 'Aplikasi pengguna', 'Data aktivitas terpantau di ponsel')],
+
+  'cap-dashboard': ['over', lt('Bagi rehabilitator', 'Dasbor rehabilitator', 'Perkembangan latihan dipantau dari jarak jauh')],
+  'cap-metode':    ['over', lt('Metode', 'Pengembangan iteratif', 'Konsultasi, desain, uji, lalu perbaiki')],
+};
+
+var def = CARDS[card] || CARDS.title;
+document.body.className = def[0];
+document.getElementById('root').innerHTML = def[1];
+</script>
+</body>
+</html>
