@@ -107,6 +107,19 @@
               font-size:17px;font-weight:800;font-style:normal;color:#fff;
               background:linear-gradient(140deg,var(--blue),var(--navy))}
   .focus .f.off i{background:#9fb3cc}
+  .focus .fh{font-size:18px;letter-spacing:.24em;text-transform:uppercase;font-weight:800;
+             color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45);margin-bottom:2px}
+  .focus .f span{display:flex;flex-direction:column}
+  .focus .f.cur{border-left-color:var(--amber)}
+  .focus .f em{font-style:normal;font-size:20px;font-weight:500;color:#4a678a;margin-top:5px}
+
+  /* ---------- lencana berjadwal ---------- */
+  .badge{position:absolute;right:110px;top:110px;display:flex;align-items:center;gap:16px;
+         padding:18px 32px;border-radius:999px;background:rgba(255,255,255,.96);
+         font-size:30px;font-weight:800;color:var(--navy-2);
+         box-shadow:0 20px 44px -22px rgba(6,24,48,.8)}
+  .badge b{width:22px;height:22px;border-radius:50%;background:#10a5a5;
+           box-shadow:0 0 0 8px rgba(16,165,165,.25)}
 
   /* ---------- lower third ---------- */
   .lt{position:absolute;left:96px;bottom:96px;display:flex;align-items:stretch;
@@ -171,10 +184,19 @@ var FOKUS = [
   'Pemantauan aktivitas rehabilitasi'
 ];
 
+/* Penjelasan satu baris per fokus, dari fitur di landing page asta-id.web.app */
+var FOKUS_DETAIL = [
+  'Socket dan bagian tangan dapat disesuaikan serta dicetak ulang',
+  'Gerak diambil dari niat pengguna lewat 4 kanal sinyal otot (sEMG)',
+  'Getaran haptik menyampaikan kekuatan genggaman ke pengguna',
+  'Latihan, nyeri, dan pemakaian alat terpantau oleh tim klinis'
+];
+
 function focusOverlay(upto){
-  return '<div class="focus">' + FOKUS.map(function(f,i){
-    var on = i < upto;
-    return '<div class="f' + (on ? '' : ' off') + '"><i>' + (i+1) + '</i><span>' + f + '</span></div>';
+  return '<div class="focus"><div class="fh">Empat fokus utama ASTA</div>' + FOKUS.map(function(f,i){
+    var on = i < upto, cur = i === upto - 1;
+    return '<div class="f' + (on ? '' : ' off') + (cur ? ' cur' : '') + '"><i>' + (i+1) + '</i>' +
+      '<span>' + f + (cur ? '<em>' + FOKUS_DETAIL[i] + '</em>' : '') + '</span></div>';
   }).join('') + '</div>';
 }
 
@@ -285,7 +307,9 @@ var CARDS = {
   'cap-13e': ['over', lt('Cara kerja · 5 dari 6', 'Hitung repetisi', 'Latihan rehabilitasi tercatat otomatis')],
   'cap-13f': ['over', lt('Cara kerja · 6 dari 6', 'Aplikasi pengguna', 'Data aktivitas terpantau di ponsel')],
 
-  'cap-dashboard': ['over', lt('Bagi rehabilitator', 'Dasbor rehabilitator', 'Perkembangan latihan dipantau dari jarak jauh')],
+  'cap-progres':   ['over', lt('Bagi rehabilitator', 'Data aktivitas pengguna', 'Tren nyeri, jam pakai, dan kepatuhan tercatat dari aplikasi')],
+  'cap-dashboard': ['over', lt('Bagi rehabilitator', 'Dasbor rehabilitator', 'Memantau perkembangan latihan dan mengevaluasi rehabilitasi')],
+  kontak:          ['over', '<div class="badge"><b></b>Kontak terdeteksi</div>'],
   'cap-metode':    ['over', lt('Metode', 'Pengembangan iteratif', 'Konsultasi, desain, uji, lalu perbaiki')],
 };
 

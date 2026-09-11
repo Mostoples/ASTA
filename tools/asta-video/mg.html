@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ASTA — motion graphic video</title>
+<!--
+  Adegan motion graphic untuk video semifinal HRIE 2026.
+
+  Setiap adegan digerakkan oleh waktu (window.setTime(t)), bukan oleh
+  animasi CSS: render-mg.js menyetel t per frame lalu memotret, jadi
+  hasilnya deterministik dan terkunci pada 30 fps.
+
+  Kemunculan elemen disinkronkan dengan KATA yang diucapkan narasi:
+  build.py menghitung waktu kata dari words.json dan mengirimkannya
+  sebagai `cues` (detik relatif terhadap awal adegan).
+
+  Parameter kueri:  scene, dur, cues (JSON)
+
+  Isi teks hanya memuat hal yang ada di naskah, rekaman voice over,
+  konfigurasi alat (js/core/device.js), atau landing page asta-id.web.app.
+-->
+<style>
+  :root{
+    --navy:#134896; --navy-2:#0d3068; --blue:#2f7fe0; --sky:#d6f0ff;
+    --amber:#f2a71b; --teal:#10a5a5; --ink:#0e2038; --muted:#4a678a;
+    --night:#060c17; --night-2:#0b1a30;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;text-rendering:geometricPrecision}
+  body.light{color:var(--ink);background:
+    radial-gradient(1200px 820px at 14% -12%,#eaf6ff 0%,transparent 60%),
+    radial-gradient(900px 700px at 98% 110%,#e2f1ff 0%,transparent 55%),
+    linear-gradient(160deg,#ffffff 0%,#f3f9ff 58%,#eaf4ff 100%)}
+  body.dark{color:#fff;background:
+    radial-gradient(1100px 760px at 50% 44%,#10233f 0%,transparent 70%),
+    linear-gradient(180deg,var(--night) 0%,#07101f 100%)}
+  #root{position:absolute;inset:0}
+  .abs{position:absolute}
+  .eyebrow{font-size:19px;letter-spacing:.3em;text-transform:uppercase;font-weight:800;color:var(--blue)}
+  .dark .eyebrow{color:#7fb8ff}
+  h2{font-size:60px;line-height:1.06;letter-spacing:-.026em;font-weight:800;margin:14px 0 0;color:var(--navy-2)}
+  .dark h2{color:#fff}
+  .sub{font-size:24px;line-height:1.45;color:var(--muted);margin-top:14px;max-width:62ch}
+  .head{position:absolute;left:150px;top:92px;right:150px}
+
+  /* kartu isi */
+  .box{background:#fff;border:2px solid rgba(19,72,150,.14);border-radius:22px;
+    box-shadow:0 22px 44px -28px rgba(19,72,150,.55)}
+  .num{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
+    font-size:22px;font-weight:800;color:#fff;background:linear-gradient(140deg,var(--blue),var(--navy))}
+  .chip{display:inline-flex;align-items:center;gap:12px;padding:14px 26px;border-radius:999px;
+    font-size:23px;font-weight:700;color:var(--navy-2);background:#fff;
+    border:2px solid rgba(19,72,150,.18);box-shadow:0 14px 28px -20px rgba(19,72,150,.6)}
+  .on{border-color:var(--blue)!important}
+  .dim{opacity:.25}
+
+  /* tipografi kinetik (tema gelap) */
+  .kin{position:absolute;left:0;right:0;text-align:center;font-weight:700;letter-spacing:-.02em}
+  .accent{color:#8fd0ff}
+  .amber{color:var(--amber)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* ============================================================
+   Pembantu animasi — semua fungsi murni terhadap t
+   ============================================================ */
+function clamp(x,a,b){return x<a?a:x>b?b:x}
+function prog(t,a,d){return clamp((t-a)/(d||.5),0,1)}
+function eo(x){return 1-Math.pow(1-x,3)}
+function eio(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
+function lerp(a,b,x){return a+(b-a)*x}
+function $(id){return document.getElementById(id)}
+function h(tag,attrs,html){var e=document.createElement(tag);
+  for(var k in (attrs||{})){ if(k==='style') e.style.cssText=attrs[k]; else e.setAttribute(k,attrs[k]); }
+  if(html!=null) e.innerHTML=html; return e}
+/* muncul: fade + naik, lalu (opsional) pudar di akhir adegan */
+function show(el,t,a,d,dy){var p=eo(prog(t,a,d||.45));
+  el.style.opacity=p.toFixed(3);
+  el.style.transform='translateY('+((1-p)*(dy==null?26:dy)).toFixed(2)+'px)';}
+function pop(el,t,a,d){var p=eo(prog(t,a,d||.35));
+  el.style.opacity=p.toFixed(3); el.style.transform='scale('+(0.86+0.14*p).toFixed(4)+')';}
+function draw(path,t,a,d){ // garis tergambar lewat stroke-dashoffset
+  var L=path.__len||(path.__len=path.getTotalLength()); var p=eio(prog(t,a,d||.6));
+  path.style.strokeDasharray=L; path.style.strokeDashoffset=(L*(1-p)).toFixed(2);}
+function sceneFade(t,dur){ // pudar masuk/keluar lembut di tepi adegan
+  var a=prog(t,0,.25), b=1-prog(t,dur-.3,.3); $('root').style.opacity=Math.min(a,b).toFixed(3);}
+
+var NS='http://www.w3.org/2000/svg';
+function svg(w,hh,inner,style){return '<svg xmlns="'+NS+'" width="'+w+'" height="'+hh+'" viewBox="0 0 '+w+' '+hh+
+  '" style="'+(style||'')+'">'+inner+'</svg>'}
+
+/* ------------------------------------------------------------
+   Piktogram tangan manusia (garis). Jari digambar sebagai ruas
+   yang dapat ditekuk; `curl` 0 = terbuka, 1 = menggenggam.
+   ------------------------------------------------------------ */
+function handSVG(id,color){
+  var fingers='';
+  var base=[[-54,-8],[-18,-22],[18,-22],[52,-10]];   // pangkal jari telunjuk..kelingking
+  var len=[74,82,76,62];
+  for(var i=0;i<4;i++){
+    fingers+='<g id="'+id+'f'+i+'" transform="translate('+base[i][0]+' '+base[i][1]+')">'+
+      '<line x1="0" y1="0" x2="0" y2="-'+(len[i]*.55)+'" stroke="'+color+'" stroke-width="22" stroke-linecap="round"/>'+
+      '<g id="'+id+'f'+i+'b" transform="translate(0 -'+(len[i]*.55)+')">'+
+      '<line x1="0" y1="0" x2="0" y2="-'+(len[i]*.45)+'" stroke="'+color+'" stroke-width="20" stroke-linecap="round"/></g></g>';
+  }
+  var thumb='<g id="'+id+'th" transform="translate(-74 40)">'+
+    '<line x1="0" y1="0" x2="-30" y2="-52" stroke="'+color+'" stroke-width="22" stroke-linecap="round"/></g>';
+  var palm='<rect x="-76" y="-30" width="152" height="120" rx="46" fill="none" stroke="'+color+'" stroke-width="10"/>'+
+    '<line x1="0" y1="90" x2="0" y2="190" stroke="'+color+'" stroke-width="10" stroke-linecap="round" opacity=".55"/>';
+  return '<g id="'+id+'">'+palm+fingers+thumb+'</g>';
+}
+function setCurl(id,c){
+  for(var i=0;i<4;i++){
+    var a=$(id+'f'+i), b=$(id+'f'+i+'b');
+    a.setAttribute('transform', a.getAttribute('transform').replace(/ rotate\([^)]*\)/,'')+' rotate('+(c*62).toFixed(2)+')');
+    b.setAttribute('transform', b.getAttribute('transform').replace(/ rotate\([^)]*\)/,'')+' rotate('+(c*78).toFixed(2)+')');
+  }
+  var th=$(id+'th');
+  th.setAttribute('transform', th.getAttribute('transform').replace(/ rotate\([^)]*\)/,'')+' rotate('+(c*48).toFixed(2)+')');
+}
+var BOTTLE='<g id="bottle"><rect x="-38" y="-120" width="76" height="210" rx="20" fill="none" stroke="#8fd0ff" stroke-width="9"/>'+
+  '<rect x="-20" y="-150" width="40" height="34" rx="8" fill="none" stroke="#8fd0ff" stroke-width="9"/>'+
+  '<line x1="-38" y1="-40" x2="38" y2="-40" stroke="#8fd0ff" stroke-width="6" opacity=".5"/></g>';
+var BOOK='<g id="book"><rect x="-80" y="-100" width="160" height="200" rx="12" fill="none" stroke="#f2a71b" stroke-width="9"/>'+
+  '<line x1="-52" y1="-100" x2="-52" y2="100" stroke="#f2a71b" stroke-width="7" opacity=".6"/>'+
+  '<line x1="-30" y1="-40" x2="50" y2="-40" stroke="#f2a71b" stroke-width="6" opacity=".5"/>'+
+  '<line x1="-30" y1="-10" x2="40" y2="-10" stroke="#f2a71b" stroke-width="6" opacity=".5"/></g>';
+
+/* ------------------------------------------------------------
+   Ikon kecil (garis) untuk kartu isi
+   ------------------------------------------------------------ */
+var IC={
+  coin:'<circle cx="24" cy="24" r="17" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M24 14v20M19 19h7.5a3.5 3.5 0 0 1 0 7H20h7a3.5 3.5 0 0 1 0 7h-8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
+  road:'<path d="M14 42 20 6M34 42 28 6M24 12v5M24 22v5M24 32v5" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>',
+  people:'<circle cx="16" cy="16" r="6" fill="none" stroke="currentColor" stroke-width="3.2"/><circle cx="33" cy="18" r="5" fill="none" stroke="currentColor" stroke-width="3.2"/><path d="M5 40c1-8 6-12 11-12s10 4 11 12M26 40c1-6 4-9 8-9s7 3 8 9" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>',
+  user:'<circle cx="24" cy="15" r="8" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M8 42c2-10 8-15 16-15s14 5 16 15" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>',
+  steth:'<path d="M12 6v12a10 10 0 0 0 20 0V6M22 28v6a8 8 0 0 0 16 0v-4" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><circle cx="38" cy="27" r="4" fill="none" stroke="currentColor" stroke-width="3.2"/>',
+  tool:'<path d="M30 8a9 9 0 0 0-8 12L8 34l6 6 14-14a9 9 0 0 0 12-8l-5 5-6-1-1-6z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>',
+  gear:'<circle cx="24" cy="24" r="7" fill="none" stroke="currentColor" stroke-width="3.4"/><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.6 10.6l4.2 4.2M33.2 33.2l4.2 4.2M10.6 37.4l4.2-4.2M33.2 14.8l4.2-4.2" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>',
+  chip:'<rect x="12" y="12" width="24" height="24" rx="4" fill="none" stroke="currentColor" stroke-width="3.4"/><path d="M18 6v6M30 6v6M18 36v6M30 36v6M6 18h6M6 30h6M36 18h6M36 30h6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
+  wave:'<path d="M4 26h7l4-12 6 22 6-26 5 18 4-8h8" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>',
+  pulse:'<circle cx="24" cy="24" r="5" fill="currentColor"/><circle cx="24" cy="24" r="12" fill="none" stroke="currentColor" stroke-width="3" opacity=".6"/><circle cx="24" cy="24" r="19" fill="none" stroke="currentColor" stroke-width="3" opacity=".3"/>',
+  phone:'<rect x="13" y="5" width="22" height="38" rx="5" fill="none" stroke="currentColor" stroke-width="3.4"/><path d="M20 37h8" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>',
+  check:'<path d="M10 25l9 9 19-20" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  print:'<rect x="10" y="8" width="28" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="3.2"/><rect x="6" y="20" width="36" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="3.2"/><rect x="14" y="30" width="20" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="3.2"/>',
+  link:'<path d="M20 28l8-8M17 22l-4 4a6 6 0 0 0 8.5 8.5l4-4M31 26l4-4a6 6 0 0 0-8.5-8.5l-4 4" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>',
+  shield:'<path d="M24 5 38 11v11c0 9-6 16-14 20C16 38 10 31 10 22V11z" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linejoin="round"/><path d="M18 24l5 5 8-9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>'
+};
+function icon(name,size,color){return '<svg viewBox="0 0 48 48" width="'+(size||44)+'" height="'+(size||44)+'" style="color:'+(color||'var(--blue)')+'">'+IC[name]+'</svg>'}
+
+/* ============================================================
+   ADEGAN
+   Setiap adegan: theme, build(P), update(t,P). P = {dur, cues}
+   ============================================================ */
+var SC = {};
+
+/* ---------- S1: "Setiap hari, kita melakukan ratusan gerakan." ---------- */
+SC.hari = { theme:'dark',
+  build:function(P){
+    var r=$('root');
+    // "ratusan": kisi titik gerak yang muncul bertahap
+    var g='';
+    for(var y=0;y<9;y++) for(var x=0;x<20;x++){
+      var cx=150+x*84, cy=150+y*96;
+      g+='<circle class="dot" cx="'+cx+'" cy="'+cy+'" r="5" fill="#8fd0ff" opacity="0"/>';
+    }
+    r.appendChild(h('div',{class:'abs',style:'inset:0'},svg(1920,1080,g)));
+    r.appendChild(h('div',{id:'l1',class:'kin',style:'top:392px;font-size:64px;color:#cfe3ff;font-weight:600'},'Setiap hari,'));
+    r.appendChild(h('div',{id:'l2',class:'kin',style:'top:478px;font-size:64px;color:#cfe3ff;font-weight:600'},'kita melakukan'));
+    r.appendChild(h('div',{id:'l3',class:'kin accent',style:'top:572px;font-size:112px;font-weight:800'},'ratusan gerakan.'));
+    this.dots=[].slice.call(document.querySelectorAll('.dot'));
+    // urutan kemunculan acak tetapi deterministik
+    var s=7; this.order=this.dots.map(function(_,i){s=(s*9301+49297)%233280;return [s/233280,i]}).sort(function(a,b){return a[0]-b[0]});
+  },
+  update:function(t,P){
+    var c=P.cues; show($('l1'),t,c.setiap||.1); show($('l2'),t,(c.kita||.9)); pop($('l3'),t,c.ratusan||1.8,.5);
+    var a=c.ratusan||1.8, n=this.order.length;
+    for(var k=0;k<n;k++){ var d=this.dots[this.order[k][1]];
+      var p=eo(prog(t,a+k*(Math.max(.6,P.dur-a-.5)/n),.25));
+      d.setAttribute('opacity',(p*.55).toFixed(3)); }
+    sceneFade(t,P.dur);
+  }};
+
+/* ---------- S2: "Tanpa pernah benar-benar memikirkannya." ---------- */
+SC.tanpa = { theme:'dark',
+  build:function(P){
+    var r=$('root');
+    var words='Tanpa pernah benar-benar memikirkannya.'.split(' ');
+    var line=h('div',{class:'kin',style:'top:470px;font-size:74px;font-weight:700'});
+    words.forEach(function(w,i){ line.appendChild(h('span',{class:'w',style:'display:inline-block;margin:0 .16em'},w)); });
+    r.appendChild(line);
+    r.appendChild(h('div',{class:'kin',style:'top:600px;font-size:26px;letter-spacing:.3em;text-transform:uppercase;color:#6f8db3;font-weight:700',id:'auto'},'otomatis · tanpa disadari'));
+    this.w=[].slice.call(document.querySelectorAll('.w'));
+  },
+  update:function(t,P){
+    var a=P.cues.tanpa||.1, b=P.cues.memikirkannya||1.6, n=this.w.length;
+    for(var i=0;i<n;i++) show(this.w[i],t,lerp(a,b,i/(n-1)),.4,18);
+    show($('auto'),t,b+.3,.5); sceneFade(t,P.dur);
+  }};
+
+/* ---------- S3–S5: menggenggam / mengangkat / menjangkau ---------- */
+function actionScene(kind,no,word){ return { theme:'dark',
+  build:function(P){
+    var r=$('root'); var obj=(kind==='jangkau')?BOOK:BOTTLE;
+    // piktogram diperbesar 1,3x: isinya hanya menempati x 150–520 pada svg 800
+    r.appendChild(h('div',{class:'abs',style:'left:150px;top:40px;transform:scale(1.3);transform-origin:0 0'},
+      svg(800,800,'<g transform="translate(470 470)">'+obj+'</g><g id="hmove" transform="translate(300 520)">'+handSVG('H','#ffffff')+'</g>')));
+    r.appendChild(h('div',{id:'no',class:'abs',style:'left:1060px;top:360px;font-size:30px;letter-spacing:.3em;font-weight:800;color:#6f8db3'},no+' / 03'));
+    r.appendChild(h('div',{id:'wd',class:'abs',style:'left:1052px;top:410px;font-size:118px;font-weight:800;letter-spacing:-.03em'},word));
+    r.appendChild(h('div',{id:'ln',class:'abs',style:'left:1060px;top:560px;height:8px;width:0;border-radius:4px;background:linear-gradient(90deg,#8fd0ff,#f2a71b)'}));
+  },
+  update:function(t,P){
+    var d=P.dur, p=eio(prog(t,.15,Math.min(1.3,d-.4)));
+    var hx=300, hy=520, curl=0;
+    if(kind==='genggam'){ hx=lerp(250,400,p); hy=lerp(560,540,p); curl=eo(prog(t,.7,.7)); }
+    if(kind==='angkat'){ curl=1; hx=400; hy=lerp(540,380,p);
+      $('bottle').setAttribute('transform','translate(0 '+lerp(0,-160,p).toFixed(1)+')'); }
+    if(kind==='jangkau'){ hx=lerp(150,330,p); hy=lerp(600,540,p); curl=lerp(.4,0,p); }
+    $('hmove').setAttribute('transform','translate('+hx.toFixed(1)+' '+hy.toFixed(1)+')');
+    setCurl('H',curl);
+    show($('no'),t,.05,.4); pop($('wd'),t,.1,.45);
+    $('ln').style.width=(eo(prog(t,.3,.8))*380).toFixed(1)+'px';
+    sceneFade(t,P.dur);
+  }};}
+SC.genggam = actionScene('genggam','01','Menggenggam');
+SC.angkat  = actionScene('angkat','02','Mengangkat');
+SC.jangkau = actionScene('jangkau','03','Menjangkau');
+
+/* ---------- S6: "…sampai kita tidak lagi bisa." — tangan berhenti ---------- */
+SC.berhenti = { theme:'dark',
+  build:function(P){
+    var r=$('root');
+    r.appendChild(h('div',{class:'abs',style:'left:560px;top:120px'},
+      svg(800,640,'<g transform="translate(560 330)">'+BOTTLE+'</g><g id="hmove" transform="translate(120 380)">'+handSVG('H','#ffffff')+'</g>'+
+      '<line id="gap" x1="330" y1="330" x2="470" y2="330" stroke="#f2a71b" stroke-width="5" stroke-dasharray="10 12" opacity="0"/>')));
+    r.appendChild(h('div',{id:'tx',class:'kin',style:'top:800px;font-size:66px;font-weight:700'},
+      'sampai kita <span class="amber">tidak lagi bisa.</span>'));
+  },
+  update:function(t,P){
+    var c=P.cues, p=eio(prog(t,.05,Math.max(.8,(c.tidak||1.4)-.1)));
+    var hx=lerp(120,300,p);
+    $('hmove').setAttribute('transform','translate('+hx.toFixed(1)+' 380)'); setCurl('H',.15);
+    // pada kata "tidak": tangan berhenti, meredup, celah tak terjangkau tampak
+    var s=prog(t,c.tidak||1.4,.6);
+    $('hmove').style.opacity=(1-.72*s).toFixed(3);
+    $('gap').setAttribute('opacity',(s*.9).toFixed(3));
+    show($('tx'),t,c.sampai||.1,.5);
+    // pudar ke hitam di akhir (naskah: cut to black)
+    var out=1-prog(t,P.dur-.55,.5); $('root').style.opacity=Math.min(prog(t,0,.25),out).toFixed(3);
+  }};
+
+/* ---------- S7 (akhir): kalimat naskah yang tidak terekam, sebagai teks ---------- */
+SC.pertanyaan = { theme:'dark',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{id:'q1',class:'kin',style:'top:410px;font-size:56px;font-weight:600;color:#cfe3ff'},
+      'bukan sekadar menggantikan gerakan —'));
+    // dua baris: dalam satu baris kalimat ini melebar sampai terpotong di tepi layar
+    r.appendChild(h('div',{id:'q2',class:'kin',style:'top:490px;font-size:60px;font-weight:800;line-height:1.2'},
+      'tetapi dirancang untuk<br><span class="accent">memahami kebutuhan penggunanya.</span>'));
+  },
+  update:function(t,P){ show($('q1'),t,.15,.5); show($('q2'),t,1.0,.6); sceneFade(t,P.dur); }};
+
+/* ---------- S9 (tengah): tiga hambatan ---------- */
+SC.masalah = { theme:'light',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{class:'head'},'<div class="eyebrow">Latar belakang</div><h2>Mengapa ASTA dibutuhkan?</h2>'));
+    var items=[
+      ['coin','Biaya','Harga lengan prostetik fungsional menjadi hambatan untuk memilikinya.'],
+      ['road','Akses layanan','Kontrol rutin menuntut perjalanan berulang ke pusat rehabilitasi.'],
+      ['people','Kebutuhan berbeda','Tungkai sisa, kekuatan otot, dan tujuan rehabilitasi setiap orang tidak sama.']];
+    items.forEach(function(it,i){
+      r.appendChild(h('div',{id:'m'+i,class:'abs box',style:'left:'+(150+i*550)+'px;top:380px;width:510px;height:290px;padding:38px 40px'},
+        '<div style="display:flex;align-items:center;gap:18px">'+icon(it[0],56)+
+        '<div style="font-size:34px;font-weight:800;color:var(--navy-2)">'+it[1]+'</div></div>'+
+        '<div style="margin-top:22px;font-size:24px;line-height:1.5;color:var(--muted)">'+it[2]+'</div>'));
+    });
+    r.appendChild(h('div',{id:'con',class:'abs',style:'left:150px;right:150px;top:760px;padding:30px 42px;border-radius:22px;'+
+      'background:linear-gradient(120deg,var(--navy),var(--blue));color:#fff;font-size:34px;font-weight:700;display:flex;align-items:center;gap:22px'},
+      icon('check',48,'#fff')+'Dibutuhkan teknologi asistif yang dapat menyesuaikan kebutuhan penggunanya.'));
+  },
+  update:function(t,P){ var c=P.cues;
+    show($('m0'),t,c.biaya||.8); show($('m1'),t,c.akses||1.8); show($('m2'),t,c.kebutuhan||3.4);
+    show($('con'),t,c.karena||6.5,.55); sceneFade(t,P.dur); }};
+
+/* ---------- S11 (kalimat 2): User-Centered Design ---------- */
+SC.ucd = { theme:'light',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{class:'head'},'<div class="eyebrow">Metode · User-Centered Design</div>'+
+      '<h2>Kebutuhan digali langsung dari pengguna</h2>'));
+    var lines='<path id="ln0" d="M960 640 L 420 520" stroke="#2f7fe0" stroke-width="4" fill="none"/>'+
+      '<path id="ln1" d="M960 640 L 960 900" stroke="#2f7fe0" stroke-width="4" fill="none"/>'+
+      '<path id="ln2" d="M960 640 L 1500 520" stroke="#2f7fe0" stroke-width="4" fill="none"/>';
+    r.appendChild(h('div',{class:'abs',style:'inset:0'},svg(1920,1080,lines)));
+    r.appendChild(h('div',{id:'core',class:'abs',style:'left:760px;top:580px;width:400px;height:120px;border-radius:24px;'+
+      'background:linear-gradient(120deg,var(--navy),var(--blue));color:#fff;display:grid;place-items:center;font-size:32px;font-weight:800'},
+      'Kebutuhan pengguna'));
+    var N=[['user','Penyandang amputasi','pengalaman memakai alat sehari-hari',150,430],
+           ['steth','Fisioterapis','kebutuhan latihan &amp; rehabilitasi',700,850],
+           ['tool','Prostetis &amp; ortotis','kecocokan socket &amp; kenyamanan',1250,430]];
+    N.forEach(function(n,i){
+      r.appendChild(h('div',{id:'n'+i,class:'abs box',style:'left:'+n[3]+'px;top:'+n[4]+'px;width:520px;padding:26px 30px;display:flex;gap:20px;align-items:center'},
+        icon(n[0],60)+'<div><div style="font-size:30px;font-weight:800;color:var(--navy-2)">'+n[1]+'</div>'+
+        '<div style="font-size:21px;color:var(--muted);margin-top:6px">'+n[2]+'</div></div>'));
+    });
+  },
+  update:function(t,P){ var c=P.cues;
+    pop($('core'),t,c.kebutuhan||.6,.4);
+    var at=[c.penyandang||3.5,c.fisioterapis||5.2,c.prostetis||6.4];
+    for(var i=0;i<3;i++){ draw($('ln'+i),t,at[i]-.25,.4); show($('n'+i),t,at[i]); }
+    sceneFade(t,P.dur); }};
+
+/* ---------- S11 (kalimat 3): pengembangan iteratif ---------- */
+SC.iterasi = { theme:'light',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{class:'head'},'<div class="eyebrow">Metode · Agile Development</div>'+
+      '<h2>Dikembangkan berulang: desain, uji, perbaiki</h2>'));
+    var cx=960, cy=640, R=280;
+    this.P=[['Kebutuhan','dari konsultasi'],['Desain','rancangan &amp; cetak 3D'],['Pengembangan','pemrograman &amp; perakitan'],
+            ['Pengujian','uji fungsi purwarupa'],['Evaluasi','masukan untuk iterasi berikutnya']];
+    var ring='<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="none" stroke="rgba(19,72,150,.15)" stroke-width="6"/>'+
+      '<circle id="arc" cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="none" stroke="#2f7fe0" stroke-width="6" stroke-linecap="round" transform="rotate(-90 '+cx+' '+cy+')"/>'+
+      '<circle id="dot" r="14" fill="#f2a71b"/>';
+    r.appendChild(h('div',{class:'abs',style:'inset:0'},svg(1920,1080,ring)));
+    var self=this; this.pos=[];
+    this.P.forEach(function(p,i){
+      var ang=-Math.PI/2+i*2*Math.PI/5, x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
+      self.pos.push([x,y]);
+      var left=x-150, top=y-52;
+      r.appendChild(h('div',{id:'p'+i,class:'abs box',style:'left:'+left+'px;top:'+top+'px;width:300px;padding:16px 20px;text-align:center'},
+        '<div style="font-size:27px;font-weight:800;color:var(--navy-2)">'+p[0]+'</div>'+
+        '<div style="font-size:19px;color:var(--muted);margin-top:4px">'+p[1]+'</div>'));
+    });
+    r.appendChild(h('div',{id:'loop',class:'abs',style:'left:'+(cx-120)+'px;top:'+(cy-40)+'px;width:240px;text-align:center;font-size:26px;font-weight:800;color:var(--blue)'},'berulang ↻'));
+  },
+  update:function(t,P){ var c=P.cues;
+    var at=[c.kebutuhan||.1,c.desain||1.8,c.dikembangkan||2.6,c.pengujian||5.0,c.evaluasi||6.0];
+    for(var i=0;i<5;i++) pop($('p'+i),t,at[i]);
+    var L=2*Math.PI*280, p=eio(prog(t,.2,P.dur-.6));
+    $('arc').style.strokeDasharray=L; $('arc').style.strokeDashoffset=(L*(1-p)).toFixed(1);
+    var ang=-Math.PI/2+p*2*Math.PI; $('dot').setAttribute('cx',(960+280*Math.cos(ang)).toFixed(1));
+    $('dot').setAttribute('cy',(640+280*Math.sin(ang)).toFixed(1));
+    show($('loop'),t,c.iteratif||3.6,.5); sceneFade(t,P.dur); }};
+
+/* ---------- S12: lima sistem terintegrasi (skema garis, bukan render) ---------- */
+SC.sistem = { theme:'light',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{class:'head'},'<div class="eyebrow">Hasil pengembangan</div>'+
+      '<h2>Lima sistem terintegrasi dalam satu lengan</h2>'));
+    // skema lengan: socket — lengan bawah (elektroda) — pergelangan — tangan
+    var s='<g stroke="#134896" stroke-width="6" fill="none" stroke-linejoin="round">'+
+      '<path id="sk" d="M300 560 q-70 0 -70 -70 v-40 q0 -70 70 -70 h220 l40 50 v80 l-40 50 z"/>'+
+      '<path id="fa" d="M560 450 L1180 470 L1180 530 L560 550 z"/>'+
+      '<rect id="wr" x="1180" y="462" width="70" height="76" rx="10"/>'+
+      '<path id="hd" d="M1250 452 h150 q40 0 40 40 v20 q0 40 -40 40 h-150 z"/>'+
+      '<path d="M1440 470 h90 M1440 492 h110 M1440 514 h100 M1440 536 h80" stroke-linecap="round"/></g>'+
+      '<g fill="#2f7fe0"><rect x="700" y="444" width="44" height="12" rx="4"/><rect x="820" y="448" width="44" height="12" rx="4"/>'+
+      '<rect x="700" y="546" width="44" height="12" rx="4"/><rect x="820" y="542" width="44" height="12" rx="4"/></g>';
+    r.appendChild(h('div',{class:'abs',style:'inset:0;top:40px'},svg(1920,1080,s)));
+    var C=[['gear','Mekanik','jari 14 ruas, cetak 3D PETG/PLA',1330,280],
+           ['chip','Kontrol','pola cengkeram dari niat pengguna',940,700],
+           ['wave','Sensor','4 kanal sEMG + deteksi kontak',560,280],
+           ['pulse','Umpan balik sensorik','haptik getar, 4 bantalan di socket',150,700],
+           ['phone','Pemantauan aplikasi','terhubung lewat Bluetooth LE',1400,700]];
+    C.forEach(function(c,i){
+      r.appendChild(h('div',{id:'c'+i,class:'abs box',style:'left:'+c[3]+'px;top:'+c[4]+'px;width:420px;padding:20px 24px;display:flex;gap:16px;align-items:center'},
+        icon(c[0],50)+'<div><div style="font-size:27px;font-weight:800;color:var(--navy-2)">'+c[1]+'</div>'+
+        '<div style="font-size:19px;color:var(--muted);margin-top:4px">'+c[2]+'</div></div>'));
+    });
+    r.appendChild(h('div',{id:'st',class:'abs',style:'left:150px;right:150px;top:930px;display:flex;gap:18px;justify-content:center'},
+      ['4 kanal sEMG','8 pola cengkeram','14 ruas jari','±38 ms niat ke gerak'].map(function(x){return '<span class="chip">'+x+'</span>'}).join('')));
+    this.paths=['sk','fa','wr','hd'].map($);
+  },
+  update:function(t,P){ var c=P.cues;
+    for(var i=0;i<4;i++) draw(this.paths[i],t,.1+i*.25,.7);
+    var at=[c.mekanik||.8,c.kontrol||1.6,c.sensor||2.3,c.umpan||3.0,c.pemantauan||4.2];
+    for(i=0;i<5;i++) show($('c'+i),t,at[i]);
+    show($('st'),t,Math.max((c.pemantauan||4.2)+.9,P.dur-2.2),.5); sceneFade(t,P.dur); }};
+
+/* ---------- S13B: kontrol berbasis intent ---------- */
+SC.intent = { theme:'light',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{class:'head'},'<div class="eyebrow">Cara kerja · 2 dari 6</div>'+
+      '<h2>Kontrol berbasis intent</h2><div class="sub"><b>Intent</b> = niat gerak pengguna, dibaca dari sinyal listrik otot (sEMG) di lengan bawah.</div>'));
+    var cols=[['Input pengguna','4 kanal sEMG'],['Pemrosesan','envelope → normalisasi → ambang'],['Perintah gerak','pola cengkeram']];
+    cols.forEach(function(c,i){
+      r.appendChild(h('div',{id:'k'+i,class:'abs box',style:'left:'+(150+i*560)+'px;top:400px;width:500px;height:470px;padding:28px 30px'},
+        '<div style="display:flex;gap:14px;align-items:center"><div class="num">'+(i+1)+'</div>'+
+        '<div><div style="font-size:30px;font-weight:800;color:var(--navy-2)">'+c[0]+'</div>'+
+        '<div style="font-size:20px;color:var(--muted)">'+c[1]+'</div></div></div><div id="kv'+i+'" style="margin-top:22px"></div>'));
+      if(i<2) r.appendChild(h('div',{id:'ar'+i,class:'abs',style:'left:'+(655+i*560)+'px;top:610px;font-size:48px;color:var(--blue);font-weight:800'},'→'));
+    });
+    // kolom 1: jejak sinyal 4 kanal (nama & warna dari device.js)
+    var CH=[['Fleksor','#4a87f2'],['Ekstensor','#10a5a5'],['Bisep','#7a5af8'],['Trisep','#d98b0b']], g='';
+    CH.forEach(function(ch,i){ g+='<text x="0" y="'+(26+i*80)+'" font-size="20" fill="#4a678a" font-family="Segoe UI">'+ch[0]+'</text>'+
+      '<path id="tr'+i+'" d="" stroke="'+ch[1]+'" stroke-width="3" fill="none"/>'; });
+    $('kv0').innerHTML=svg(440,330,g);
+    // kolom 2: tiga batang tahap pemrosesan
+    var b='';['Envelope RMS','Normalisasi MVC','Ambang'].forEach(function(n,i){
+      b+='<text x="0" y="'+(30+i*100)+'" font-size="21" fill="#0d3068" font-weight="700" font-family="Segoe UI">'+n+'</text>'+
+      '<rect x="0" y="'+(44+i*100)+'" width="430" height="22" rx="11" fill="rgba(19,72,150,.1)"/>'+
+      '<rect id="bb'+i+'" x="0" y="'+(44+i*100)+'" width="0" height="22" rx="11" fill="#2f7fe0"/>'; });
+    $('kv1').innerHTML=svg(440,330,b);
+    // kolom 3: tangan menutup + nama pola
+    $('kv2').innerHTML=svg(440,250,'<g transform="translate(220 150) scale(.8)">'+handSVG('I','#134896')+'</g>')+
+      '<div id="gp" style="text-align:center;font-size:30px;font-weight:800;color:var(--blue)">Power Grip</div>';
+  },
+  update:function(t,P){ var c=P.cues, a0=c.input||.2, a1=c.diproses||2.2, a2=c.perintah||3.6;
+    show($('k0'),t,a0); show($('k1'),t,a1); show($('k2'),t,a2); show($('ar0'),t,a1-.2); show($('ar1'),t,a2-.2);
+    for(var i=0;i<4;i++){ var d='M0 '+(50+i*80); var amp=(i<2?1:.35)*(0.4+0.6*eo(prog(t,a0,1.2)));
+      for(var x=0;x<=440;x+=6){ var ph=x*.09+t*9+i*1.7;
+        var y=50+i*80+Math.sin(ph)*9*amp+Math.sin(ph*2.3+i)*6*amp; d+=' L'+x+' '+y.toFixed(1); }
+      $('tr'+i).setAttribute('d',d); }
+    [.82,.74,.61].forEach(function(v,i){ $('bb'+i).setAttribute('width',(430*v*eo(prog(t,a1+.2+i*.35,.6))).toFixed(1)); });
+    setCurl('I',eo(prog(t,a2+.3,.8))); sceneFade(t,P.dur); }};
+
+/* ---------- S13D: umpan balik sensorik ---------- */
+SC.umpanbalik = { theme:'light',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{class:'head'},'<div class="eyebrow">Cara kerja · 4 dari 6</div>'+
+      '<h2>Umpan balik sensorik</h2><div class="sub">Pengguna merasakan kekuatan genggaman tanpa harus terus menatap tangannya.</div>'));
+    var S=[['wave','Sensor kontak','di ujung jari'],['chip','Sistem','mengolah informasi kontak'],
+           ['pulse','4 bantalan haptik','bergetar di dalam socket'],['user','Pengguna','merasakan genggaman']];
+    S.forEach(function(s,i){
+      r.appendChild(h('div',{id:'u'+i,class:'abs box',style:'left:'+(150+i*420)+'px;top:470px;width:360px;height:300px;padding:30px;text-align:center'},
+        '<div style="display:grid;place-items:center" id="ui'+i+'">'+icon(s[0],84)+'</div>'+
+        '<div style="font-size:28px;font-weight:800;color:var(--navy-2);margin-top:18px">'+s[1]+'</div>'+
+        '<div style="font-size:20px;color:var(--muted);margin-top:8px">'+s[2]+'</div>'));
+      if(i<3) r.appendChild(h('div',{id:'ua'+i,class:'abs',style:'left:'+(518+i*420)+'px;top:588px;font-size:46px;color:var(--blue);font-weight:800'},'→'));
+    });
+  },
+  update:function(t,P){ var c=P.cues, a=c.informasi||.2, b=c.umpan||3.0, e=c.pengguna||5.2;
+    var at=[a,a+.9,b,e]; for(var i=0;i<4;i++) show($('u'+i),t,at[i]);
+    for(i=0;i<3;i++) show($('ua'+i),t,at[i+1]-.25);
+    var s=1+.08*Math.sin(t*14)*prog(t,b,.3); $('ui2').style.transform='scale('+s.toFixed(3)+')';
+    sceneFade(t,P.dur); }};
+
+/* ---------- S14: System Usability Scale ---------- */
+SC.sus = { theme:'light',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{class:'head'},'<div class="eyebrow">Hasil pengujian</div><h2>Diuji dengan System Usability Scale</h2>'));
+    r.appendChild(h('div',{id:'what',class:'abs box',style:'left:150px;top:380px;width:820px;padding:36px 40px'},
+      '<div style="font-size:30px;font-weight:800;color:var(--navy-2)">Apa itu SUS?</div>'+
+      '<div style="font-size:23px;color:var(--muted);margin-top:10px;line-height:1.5">Kuesioner standar untuk mengukur seberapa mudah sebuah produk digunakan.</div>'+
+      '<div id="f" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px"></div>'));
+    $('f').innerHTML=[['10','pernyataan'],['1–5','skala jawaban'],['0–100','rentang skor']].map(function(x,i){
+      return '<div id="sf'+i+'" style="background:#f2f8ff;border-radius:16px;padding:18px;text-align:center">'+
+        '<div style="font-size:44px;font-weight:800;color:var(--navy)">'+x[0]+'</div>'+
+        '<div style="font-size:19px;color:var(--muted)">'+x[1]+'</div></div>'}).join('');
+    r.appendChild(h('div',{id:'res',class:'abs',style:'left:1040px;top:380px;width:730px;height:420px;border-radius:26px;'+
+      'background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:44px;display:flex;flex-direction:column;justify-content:center'},
+      '<div style="font-size:22px;letter-spacing:.24em;text-transform:uppercase;font-weight:800;opacity:.8">Hasil</div>'+
+      '<div style="display:flex;align-items:center;gap:22px;margin-top:18px">'+icon('check',86,'#fff')+
+      '<div style="font-size:58px;font-weight:800;line-height:1.05">Layak untuk dipakai</div></div>'+
+      '<div style="font-size:22px;opacity:.85;margin-top:22px">Purwarupa ASTA dinilai layak digunakan berdasarkan hasil SUS.</div>'));
+  },
+  update:function(t,P){ var c=P.cues;
+    show($('what'),t,c.system||.4); for(var i=0;i<3;i++) pop($('sf'+i),t,(c.usability||1.2)+i*.3);
+    show($('res'),t,c.layak||4.2,.55); sceneFade(t,P.dur); }};
+
+/* ---------- S15 (kalimat 2): adaptif + pembeda ASTA ---------- */
+SC.adaptif = { theme:'light',
+  build:function(){
+    var r=$('root');
+    r.appendChild(h('div',{class:'head'},'<div class="eyebrow">Kebermanfaatan</div><h2>Menyesuaikan diri dengan penggunanya</h2>'));
+    // 8 pola cengkeram dari js/core/device.js
+    var G=['Terbuka','Power Grip','Pinch','Tripod','Lateral / Kunci','Menunjuk','Hook','Tap / Ketuk'];
+    var grid=h('div',{class:'abs',style:'left:150px;top:350px;width:860px'});
+    grid.innerHTML='<div style="font-size:24px;font-weight:800;color:var(--navy-2);margin-bottom:16px">8 pola cengkeram, berpindah lewat isyarat otot</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">'+
+      G.map(function(g,i){return '<div id="g'+i+'" class="box" style="padding:18px 12px;text-align:center;font-size:21px;font-weight:700;color:var(--navy-2)">'+g+'</div>'}).join('')+'</div>'+
+      '<div id="adj" style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap">'+
+      ['Socket modular','Kalibrasi harian','Kecepatan &amp; batas gaya'].map(function(x){return '<span class="chip" style="font-size:20px;padding:10px 20px">'+x+'</span>'}).join('')+'</div>';
+    r.appendChild(grid);
+    var D=[['shield','Non-invasif','tanpa operasi, tanpa implan'],['print','Modular','bagian rusak dicetak ulang, bukan ganti alat'],
+           ['link','Terhubung','data latihan sampai ke tim klinis']];
+    var col=h('div',{id:'dif',class:'abs',style:'left:1080px;top:350px;width:690px'});
+    col.innerHTML='<div style="font-size:24px;font-weight:800;color:var(--navy-2);margin-bottom:16px">Yang membedakan ASTA</div>'+
+      D.map(function(d,i){return '<div id="d'+i+'" class="box" style="padding:22px 26px;margin-bottom:16px;display:flex;gap:18px;align-items:center">'+
+        icon(d[0],52)+'<div><div style="font-size:28px;font-weight:800;color:var(--navy-2)">'+d[1]+'</div>'+
+        '<div style="font-size:20px;color:var(--muted);margin-top:4px">'+d[2]+'</div></div></div>'}).join('');
+    r.appendChild(col);
+  },
+  update:function(t,P){ var c=P.cues, a=c.disesuaikan||1.0, b=c.merespons||3.4, e=c.membantu||5.6;
+    show($('adj'),t,a); for(var i=0;i<8;i++) pop($('g'+i),t,b+i*.12,.3);
+    show($('dif'),t,e-.2,.3); for(i=0;i<3;i++) show($('d'+i),t,e+i*.45);
+    sceneFade(t,P.dur); }};
+
+/* ---------- S17: "…setiap gerakan memiliki arti." (callback gelap) ---------- */
+SC.arti = { theme:'dark',
+  build:function(){
+    var r=$('root'); var W=['Menggenggam','Mengangkat','Menjangkau'];
+    r.appendChild(h('div',{class:'abs',style:'left:0;right:0;top:300px;display:flex;justify-content:center;gap:90px'},
+      W.map(function(w,i){return '<div id="a'+i+'" style="font-size:44px;font-weight:700;color:#5d7597">'+w+'</div>'}).join('')));
+    r.appendChild(h('div',{id:'t1',class:'kin',style:'top:470px;font-size:52px;font-weight:600;color:#cfe3ff'},
+      'Namun bagi mereka yang kehilangan kemampuan tersebut,'));
+    r.appendChild(h('div',{id:'t2',class:'kin',style:'top:580px;font-size:86px;font-weight:800'},
+      'setiap gerakan <span class="accent">memiliki arti.</span>'));
+  },
+  update:function(t,P){ var c=P.cues;
+    for(var i=0;i<3;i++){ show($('a'+i),t,.1+i*.2);
+      var lit=prog(t,c.setiap||4.0,.5); $('a'+i).style.color=lit>0?'rgb('+Math.round(lerp(93,143,lit))+','+Math.round(lerp(117,208,lit))+','+Math.round(lerp(151,255,lit))+')':'#5d7597'; }
+    show($('t1'),t,c.namun||.2,.5); show($('t2'),t,c.setiap||4.0,.55); sceneFade(t,P.dur); }};
+
+/* ============================================================ */
+var q=new URLSearchParams(location.search);
+var P={scene:q.get('scene'),dur:parseFloat(q.get('dur')||'4'),cues:JSON.parse(q.get('cues')||'{}')};
+var S=SC[P.scene];
+document.body.className=S?S.theme:'light';
+if(S){ S.build(P); }
+window.setTime=function(t){ if(S) S.update(t,P); };
+window.setTime(0);
+window.__ready=true;
+</script>
+</body>
+</html>

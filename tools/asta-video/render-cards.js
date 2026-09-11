@@ -25,7 +25,7 @@ const OVER = [
   'kata-menggenggam', 'kata-mengangkat', 'kata-menjangkau',
   'lt-leader', 'lt-research-a', 'lt-research-b', 'lt-software', 'lt-it', 'lt-iot',
   'cap-13a', 'cap-13b', 'cap-13c', 'cap-13d', 'cap-13e', 'cap-13f',
-  'cap-dashboard', 'cap-metode',
+  'cap-dashboard', 'cap-metode', 'cap-progres', 'kontak',
 ];
 
 function localChromium() {
