@@ -11,12 +11,22 @@
   menjadi satu frame video yang final: tidak ada langkah compositing
   terpisah, dan teksnya tetap tajam 1:1.
 
+  Dua mode:
+    - adegan halaman : mockup perangkat + panel penjelas berisi
+                       badge peran, judul, ringkasan, dan tiga butir
+                       yang muncul bergiliran
+    - kartu penjelas : satu frame diam berisi paparan (masalah,
+                       cara kerja, spesifikasi, dan seterusnya)
+
   Parameter kueri:
     src      berkas aplikasi yang dimuat, mis. pasien-dashboard.html
     variant  desktop | android
+    badge    label peran, mis. "Untuk pasien"
     title    judul adegan
     sub      keterangan adegan
+    p1,p2,p3 butir penjelas
     n, of    nomor adegan dan totalnya
+    card     bila diisi, panggung menampilkan kartu dengan id ini
 -->
 <style>
   :root {
@@ -25,6 +35,7 @@
     --pri: #2b6cde;
     --pri-400: #4a87f2;
     --teal: #10a5a5;
+    --teal-300: #3fd0c9;
     --paper: #e8eef7;
   }
 
@@ -72,15 +83,15 @@
     gap: 14px;
   }
   .brand .mark {
-    width: 48px; height: 48px;
-    border-radius: 15px;
+    width: 46px; height: 46px;
+    border-radius: 14px;
     display: grid; place-items: center;
     background: linear-gradient(140deg, var(--pri-400), #17428f);
     box-shadow: 0 10px 22px -8px #0a2148;
   }
-  .brand .nm { font-size: 25px; font-weight: 700; letter-spacing: .16em; }
+  .brand .nm { font-size: 24px; font-weight: 700; letter-spacing: .16em; }
   .brand .tg {
-    font-size: 11.5px; letter-spacing: .2em; text-transform: uppercase;
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
     opacity: .62; font-weight: 600; margin-top: 3px;
   }
 
@@ -107,79 +118,87 @@
     background: linear-gradient(90deg, var(--pri-400), var(--teal));
   }
 
-  /* ---------------- Kartu pembuka & penutup ---------------- */
-  .card-mode .brand, .card-mode .counter { display: none; }
-  .card {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-content: center;
-    justify-items: center;
-    text-align: center;
-    padding: 0 200px;
-  }
-  .card .mk {
-    width: 96px; height: 96px;
-    border-radius: 30px;
-    display: grid; place-items: center;
-    margin-bottom: 42px;
-    background: linear-gradient(140deg, var(--pri-400), #17428f);
-    box-shadow: 0 22px 48px -14px #0a2148;
-  }
-  .card .mk svg { width: 52px; height: 52px; }
-  .card h1 {
-    font-size: 88px;
-    letter-spacing: .2em;
-    font-weight: 700;
-    margin: 0 0 6px;
-    text-indent: .2em;
-  }
-  .card .tg {
-    font-size: 17px;
-    letter-spacing: .34em;
-    text-transform: uppercase;
-    opacity: .6;
-    font-weight: 600;
-  }
-  .card .ln {
-    width: 96px; height: 4px; border-radius: 3px;
-    margin: 44px 0;
-    background: linear-gradient(90deg, var(--pri-400), var(--teal));
-  }
-  .card p {
-    font-size: 27px;
-    line-height: 1.6;
-    opacity: .78;
-    max-width: 30ch;
-    margin: 0;
-    font-weight: 400;
-  }
-  .card .url {
-    margin-top: 46px;
-    font-size: 22px;
-    letter-spacing: .05em;
+  /* ---------------- Panel penjelas adegan ---------------- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 15px 7px 12px;
+    border-radius: 999px;
+    background: rgba(74,135,242,.16);
+    border: 1px solid rgba(120,175,255,.3);
+    font-size: 13px;
     font-weight: 650;
-    color: #8fc7ff;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #a9ccff;
   }
-  .card .note {
-    position: absolute;
-    left: 0; right: 0; bottom: 74px;
-    font-size: 15px;
-    opacity: .42;
-    font-weight: 400;
+  .badge::before {
+    content: '';
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--teal-300);
+    box-shadow: 0 0 0 4px rgba(63,208,201,.18);
   }
+
+  .points { list-style: none; margin: 0; padding: 0; }
+  .points li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    /* Nilai awal; perekam menulis ulang tiap frame lewat setTime() */
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .points .tick {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    width: 23px; height: 23px;
+    border-radius: 8px;
+    display: grid; place-items: center;
+    background: linear-gradient(140deg, rgba(74,135,242,.34), rgba(16,165,165,.3));
+    border: 1px solid rgba(146,196,255,.34);
+  }
+  .points .tick svg { width: 13px; height: 13px; }
 
   /* =========================================================
      Varian DESKTOP
-     Mockup jendela peramban, iframe 1520x800 pada skala 1:1.
+     Panel penjelas di kiri, mockup jendela peramban di kanan
+     dengan iframe 1204x800 pada skala 1:1.
      ========================================================= */
-  .desktop .brand { left: 96px; top: 44px; }
-  .desktop .counter { right: 100px; top: 60px; }
+  .desktop .brand { left: 88px; top: 50px; }
+  .desktop .counter { right: 88px; top: 64px; }
+
+  .desktop .info {
+    position: absolute;
+    left: 88px; top: 222px;
+    width: 472px;
+  }
+  .desktop .info h1 {
+    font-size: 46px;
+    line-height: 1.08;
+    margin: 26px 0 0;
+    letter-spacing: -.024em;
+    font-weight: 700;
+  }
+  .desktop .info .sub {
+    margin: 16px 0 0;
+    font-size: 19px;
+    line-height: 1.52;
+    opacity: .66;
+    font-weight: 400;
+  }
+  .desktop .info .rule {
+    width: 66px; height: 4px; border-radius: 3px;
+    margin: 28px 0 26px;
+    background: linear-gradient(90deg, var(--pri-400), var(--teal));
+  }
+  .desktop .points { display: grid; gap: 19px; }
+  .desktop .points li { font-size: 17.5px; line-height: 1.5; }
 
   .desktop .win {
     position: absolute;
-    left: 200px; top: 118px;
-    width: 1520px;
+    left: 628px; top: 128px;
+    width: 1204px;
     border-radius: 16px;
     overflow: hidden;
     background: #fff;
@@ -193,7 +212,7 @@
     border-bottom: 1px solid #cbd7e8;
   }
   .desktop .dot { width: 12px; height: 12px; border-radius: 50%; }
-  .desktop .url {
+  .desktop .addr {
     flex: 1;
     margin-left: 14px;
     height: 25px;
@@ -205,49 +224,43 @@
     color: #5c728f;
     letter-spacing: .01em;
   }
-  .desktop iframe { display: block; width: 1520px; height: 800px; border: 0; }
-
-  .desktop .cap { position: absolute; left: 200px; top: 972px; width: 1520px; }
-  .desktop .cap h1 { font-size: 38px; margin: 0; letter-spacing: -.018em; font-weight: 700; }
-  .desktop .cap p {
-    margin: 7px 0 0;
-    font-size: 18.5px;
-    opacity: .68;
-    font-weight: 400;
-  }
+  .desktop iframe { display: block; width: 1204px; height: 800px; border: 0; }
 
   /* =========================================================
      Varian ANDROID
      Panel teks di kiri, mockup ponsel 393x830 skala 1:1 di kanan.
      ========================================================= */
-  .android .brand { left: 128px; top: 96px; }
-  .android .counter { left: 128px; bottom: 110px; }
+  .android .brand { left: 124px; top: 84px; }
+  .android .counter { left: 124px; bottom: 96px; }
 
-  .android .panel {
+  .android .info {
     position: absolute;
-    left: 128px; top: 300px;
-    width: 830px;
+    left: 124px; top: 196px;
+    width: 964px;
   }
-  .android .panel h1 {
-    font-size: 62px;
+  .android .info h1 {
+    font-size: 60px;
     line-height: 1.06;
-    margin: 0;
+    margin: 28px 0 0;
     letter-spacing: -.028em;
     font-weight: 700;
+    max-width: 17ch;
   }
-  .android .panel p {
-    margin: 24px 0 0;
-    font-size: 24px;
-    line-height: 1.55;
-    opacity: .7;
-    max-width: 22ch;
+  .android .info .sub {
+    margin: 20px 0 0;
+    font-size: 23px;
+    line-height: 1.5;
+    opacity: .68;
+    max-width: 44ch;
     font-weight: 400;
   }
-  .android .rule {
+  .android .info .rule {
     width: 74px; height: 4px; border-radius: 3px;
-    margin-bottom: 30px;
+    margin: 32px 0 30px;
     background: linear-gradient(90deg, var(--pri-400), var(--teal));
   }
+  .android .points { display: grid; gap: 20px; }
+  .android .points li { font-size: 20.5px; line-height: 1.45; max-width: 46ch; }
 
   .android .phone {
     position: absolute;
@@ -305,6 +318,276 @@
     background: rgba(20,35,58,.34);
     z-index: 3;
   }
+
+  /* =========================================================
+     KARTU PENJELAS
+     Satu frame diam; perakit menahannya beberapa detik dengan
+     muncul dan pudar lembut. Bilah progres disembunyikan supaya
+     tidak terlihat membeku selama kartu tampil.
+     ========================================================= */
+  .card-mode .brand, .card-mode .counter, .card-mode .prog { display: none; }
+
+  .card {
+    position: absolute;
+    inset: 0;
+    padding: 104px 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .card .eyebrow {
+    font-size: 14px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #7fb2ff;
+  }
+  .card h2 {
+    font-size: 62px;
+    line-height: 1.08;
+    letter-spacing: -.026em;
+    font-weight: 700;
+    margin: 20px 0 0;
+    max-width: 20ch;
+  }
+  .card .lead {
+    margin: 20px 0 0;
+    font-size: 24px;
+    line-height: 1.55;
+    opacity: .7;
+    max-width: 58ch;
+    font-weight: 400;
+  }
+  .card .note {
+    position: absolute;
+    left: 150px; right: 150px; bottom: 64px;
+    font-size: 15.5px;
+    opacity: .44;
+    font-weight: 400;
+  }
+
+  /* ---- kartu sampul (pembuka & penutup) ---- */
+  .card.hero {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .card.hero .mk {
+    width: 96px; height: 96px;
+    border-radius: 30px;
+    display: grid; place-items: center;
+    margin-bottom: 42px;
+    background: linear-gradient(140deg, var(--pri-400), #17428f);
+    box-shadow: 0 22px 48px -14px #0a2148;
+  }
+  .card.hero .mk svg { width: 52px; height: 52px; }
+  .card.hero h1 {
+    font-size: 88px;
+    letter-spacing: .2em;
+    font-weight: 700;
+    margin: 0 0 6px;
+    text-indent: .2em;
+  }
+  .card.hero .tg {
+    font-size: 17px;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    opacity: .6;
+    font-weight: 600;
+  }
+  .card.hero .ln {
+    width: 96px; height: 4px; border-radius: 3px;
+    margin: 44px 0;
+    background: linear-gradient(90deg, var(--pri-400), var(--teal));
+  }
+  .card.hero p {
+    font-size: 27px;
+    line-height: 1.6;
+    opacity: .78;
+    max-width: 32ch;
+    margin: 0;
+    font-weight: 400;
+  }
+  .card.hero .url {
+    margin-top: 46px;
+    font-size: 24px;
+    letter-spacing: .05em;
+    font-weight: 650;
+    color: #8fc7ff;
+  }
+  .card.hero .note { text-align: center; }
+
+  /* ---- kartu pembatas bagian ---- */
+  .card.chapter { justify-content: center; }
+  .card.chapter .num {
+    font-size: 150px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -.04em;
+    background: linear-gradient(140deg, var(--pri-400), var(--teal-300));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    opacity: .9;
+  }
+  .card.chapter h2 { font-size: 76px; margin-top: 8px; }
+  .card.chapter .lead { max-width: 52ch; font-size: 26px; margin-top: 24px; }
+
+  /* ---- daftar bernomor (kartu masalah) ---- */
+  .rows { display: grid; gap: 26px; margin-top: 52px; max-width: 1320px; }
+  .rows .row {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    align-items: start;
+    gap: 30px;
+    padding: 26px 32px 26px 0;
+    border-top: 1px solid rgba(255,255,255,.12);
+  }
+  .rows .row .k {
+    font-size: 34px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: #6ea8ff;
+    opacity: .75;
+    line-height: 1.1;
+  }
+  .rows .row h3 { font-size: 31px; margin: 0; font-weight: 650; letter-spacing: -.015em; }
+  .rows .row p {
+    margin: 10px 0 0;
+    font-size: 20.5px;
+    line-height: 1.5;
+    opacity: .66;
+    max-width: 72ch;
+    font-weight: 400;
+  }
+
+  /* ---- empat langkah berjajar (kartu alur) ---- */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 26px;
+    margin-top: 54px;
+  }
+  .steps .st {
+    padding: 34px 30px 36px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .steps .st .n {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    display: grid; place-items: center;
+    font-size: 19px; font-weight: 750;
+    background: linear-gradient(140deg, var(--pri-400), #17428f);
+    box-shadow: 0 10px 22px -10px #0a2148;
+  }
+  .steps .st h3 { font-size: 25px; margin: 24px 0 0; font-weight: 650; letter-spacing: -.012em; }
+  .steps .st p {
+    margin: 12px 0 0;
+    font-size: 18px;
+    line-height: 1.5;
+    opacity: .64;
+    font-weight: 400;
+  }
+
+  /* Rantai pemrosesan sinyal, di bawah empat langkah */
+  .chain {
+    margin-top: 44px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: nowrap;
+  }
+  .chain b {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    padding: 11px 20px;
+    border-radius: 999px;
+    background: rgba(16,165,165,.14);
+    border: 1px solid rgba(63,208,201,.26);
+    color: #b8f0ec;
+    white-space: nowrap;
+  }
+  .chain i {
+    flex: 0 0 auto;
+    width: 20px; height: 2px;
+    background: rgba(255,255,255,.26);
+  }
+
+  /* ---- kartu spesifikasi ---- */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    margin-top: 44px;
+  }
+  .kpis .kp {
+    padding: 28px 28px 30px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .kpis .kp b {
+    display: block;
+    font-size: 52px;
+    font-weight: 750;
+    letter-spacing: -.03em;
+    line-height: 1;
+    background: linear-gradient(140deg, #8fc0ff, var(--teal-300));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .kpis .kp span {
+    display: block;
+    margin-top: 12px;
+    font-size: 17px;
+    line-height: 1.4;
+    opacity: .64;
+  }
+
+  .spec {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 64px;
+    margin-top: 40px;
+  }
+  .spec div {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 15px 2px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    font-size: 19px;
+  }
+  .spec div span:first-child { opacity: .56; }
+  .spec div span:last-child { font-weight: 600; text-align: right; }
+
+  /* ---- kartu teknis ---- */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 50px;
+  }
+  .tiles .tile {
+    padding: 32px 34px 34px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .tiles .tile h3 {
+    font-size: 25px; margin: 0; font-weight: 650; letter-spacing: -.012em;
+  }
+  .tiles .tile p {
+    margin: 12px 0 0;
+    font-size: 18.5px;
+    line-height: 1.52;
+    opacity: .64;
+    font-weight: 400;
+  }
 </style>
 </head>
 <body>
@@ -316,12 +599,15 @@
   var q = new URLSearchParams(location.search);
   var variant = q.get('variant') === 'android' ? 'android' : 'desktop';
   var src = q.get('src') || 'index.html';
+  var badge = q.get('badge') || '';
   var title = q.get('title') || '';
   var sub = q.get('sub') || '';
   var n = q.get('n') || '1';
   var of = q.get('of') || '1';
+  var points = ['p1', 'p2', 'p3'].map(function (k) { return q.get(k) || ''; })
+    .filter(function (s) { return s; });
 
-  var card = q.get('card');   // 'intro' | 'outro' | kosong
+  var card = q.get('card');   // id kartu, atau kosong untuk adegan halaman
   document.body.className = variant + (card ? ' card-mode' : '');
 
   function esc(s) {
@@ -331,14 +617,19 @@
   }
 
   /* Lambang ASTA — sama dengan Shell.logo() di aplikasi */
-  var LOGO =
-    '<svg width="26" height="26" viewBox="0 0 32 32" fill="none">' +
+  var LOGO_PATHS =
     '<path d="M11 21V9.5a2.2 2.2 0 0 1 4.4 0V19" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
     '<path d="M15.4 13.6V8a2.2 2.2 0 0 1 4.4 0v11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
     '<path d="M19.8 14.4v-2.2a2.2 2.2 0 0 1 4.4 0V19a8 8 0 0 1-8 8h-1.6A7.8 7.8 0 0 1 7 19.2" ' +
     'stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
     '<path d="M2 7.5h3l1.6-3.2L9 10l1.6-2.5h2" stroke="#a8ffe8" stroke-width="2" ' +
-    'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    'stroke-linecap="round" stroke-linejoin="round"/>';
+  var LOGO = '<svg width="25" height="25" viewBox="0 0 32 32" fill="none">' + LOGO_PATHS + '</svg>';
+  var LOGO_BIG = '<svg viewBox="0 0 32 32" fill="none">' + LOGO_PATHS + '</svg>';
+
+  var TICK =
+    '<svg viewBox="0 0 14 14" fill="none" stroke="#cfe6ff" stroke-width="2.2" ' +
+    'stroke-linecap="round" stroke-linejoin="round"><path d="M2.4 7.4 5.6 10.6 11.6 3.8"/></svg>';
 
   /* Ikon bilah status ponsel: sinyal, wifi, baterai */
   var SYSICONS =
@@ -357,6 +648,140 @@
       '<rect x="2.6" y="2.6" width="13" height="6.8" rx="1.6" fill="currentColor"/>' +
       '<path d="M21.6 4.2v3.6a2 2 0 0 0 0-3.6z" fill="currentColor" opacity=".5"/></svg>';
 
+  /* ==========================================================
+     Isi kartu penjelas.
+
+     Angka dan istilah di sini mengikuti konfigurasi alat yang
+     sesungguhnya (js/core/device.js) dan model Blender. Tidak
+     ada klaim jumlah pengguna, testimoni, atau hasil klinis —
+     ASTA masih purwarupa penelitian.
+     ========================================================== */
+
+  function rows(items) {
+    return '<div class="rows">' + items.map(function (it, i) {
+      return '<div class="row"><div class="k">' + String(i + 1).padStart(2, '0') + '</div>' +
+        '<div><h3>' + it[0] + '</h3><p>' + it[1] + '</p></div></div>';
+    }).join('') + '</div>';
+  }
+
+  function chapter(num, h, lead) {
+    return '<div class="card chapter"><div class="num">' + num + '</div>' +
+      '<h2>' + h + '</h2><p class="lead">' + lead + '</p></div>';
+  }
+
+  var CARDS = {
+    intro:
+      '<div class="card hero"><span class="mk">' + LOGO_BIG + '</span>' +
+      '<h1>ASTA</h1><div class="tg">Telerehabilitasi Lengan Bionik</div>' +
+      '<div class="ln"></div>' +
+      '<p>Lengan bionik modular non-invasif, terhubung dengan tim klinis.</p>' +
+      '<div class="note">Purwarupa penelitian &middot; bukan alat diagnostik</div></div>',
+
+    masalah:
+      '<div class="card"><div class="eyebrow">Masalah</div>' +
+      '<h2>Tiga hambatan yang paling sering luput</h2>' +
+      rows([
+        ['Nyeri phantom jarang tertangani',
+         'Nyeri pada anggota tubuh yang sudah tiada kerap berlanjut bertahun-tahun. ' +
+         'Penanganannya menuntut latihan terpandu yang rutin, bukan obat semata.'],
+        ['Lengan prostetik sering ditinggalkan',
+         'Alat yang terasa berat, lambat, atau sulit dikendalikan berakhir di lemari. ' +
+         'Tanpa pemantauan, tim klinis tidak tahu kapan pemakaian mulai menurun.'],
+        ['Layanan rehabilitasi jauh dari rumah',
+         'Kontrol rutin menuntut perjalanan berulang ke pusat rehabilitasi, sehingga ' +
+         'banyak sesi latihan akhirnya berjalan tanpa pengawasan sama sekali.'],
+      ]) + '</div>',
+
+    produk: chapter('01', 'Produk',
+      'Lengan bionik transradial dan platform telerehabilitasinya — satu alat, ' +
+      'satu aplikasi, empat peran yang saling terhubung.'),
+
+    alur:
+      '<div class="card"><div class="eyebrow">Cara kerja</div>' +
+      '<h2>Dari kontraksi otot sampai dasbor terapis</h2>' +
+      '<div class="steps">' +
+        '<div class="st"><div class="n">1</div><h3>Pasang elektroda</h3>' +
+        '<p>Empat bantalan sEMG ditempel pada titik otot yang ditandai prostetis. ' +
+        'Tanpa operasi, tanpa implan.</p></div>' +
+        '<div class="st"><div class="n">2</div><h3>Kalibrasi</h3>' +
+        '<p>Wizard tiga langkah mengukur baseline dan kontraksi maksimum hari itu, ' +
+        'lalu menyetel ambang otomatis.</p></div>' +
+        '<div class="st"><div class="n">3</div><h3>Latihan terpandu</h3>' +
+        '<p>Aplikasi memandu sesi harian sesuai resep terapis, menghitung repetisi, ' +
+        'dan mencatat nyeri sesudahnya.</p></div>' +
+        '<div class="st"><div class="n">4</div><h3>Tim klinis memantau</h3>' +
+        '<p>Hasil sesi langsung terlihat di dasbor terapis, sehingga program dapat ' +
+        'disesuaikan tanpa menunggu kontrol.</p></div>' +
+      '</div>' +
+      '<div class="chain">' +
+        ['sEMG mentah', 'envelope RMS', 'normalisasi MVC', 'ambang',
+         'pola cengkeram', 'gaya proporsional', 'umpan balik haptik']
+          .map(function (s) { return '<b>' + s + '</b>'; }).join('<i></i>') +
+      '</div></div>',
+
+    pasien: chapter('02', 'Untuk pasien',
+      'Sembilan halaman yang menjawab satu pertanyaan setiap hari: ' +
+      'apa yang harus saya lakukan, dan apakah keadaannya membaik.'),
+
+    klinis: chapter('03', 'Untuk tim klinis',
+      'Fisioterapis, prostetis, dan admin klinik melihat data yang sama — ' +
+      'masing-masing dari sudut pandang pekerjaannya sendiri.'),
+
+    spek:
+      '<div class="card"><div class="eyebrow">Spesifikasi</div>' +
+      '<h2>Angka yang benar-benar ada di alat</h2>' +
+      '<div class="kpis">' +
+        '<div class="kp"><b>4</b><span>kanal sEMG permukaan</span></div>' +
+        '<div class="kp"><b>8</b><span>pola cengkeram tersimpan</span></div>' +
+        '<div class="kp"><b>14</b><span>ruas jari berartikulasi</span></div>' +
+        '<div class="kp"><b>&plusmn;38 ms</b><span>latensi niat ke gerak</span></div>' +
+      '</div>' +
+      '<div class="spec">' +
+        [['Jenis', 'Transradial modular, non-invasif'],
+         ['Derajat kebebasan', '5 digit + rotasi pergelangan'],
+         ['Akuisisi sinyal', '4 kanal sEMG permukaan'],
+         ['Umpan balik', 'Haptik getar, 4 bantalan'],
+         ['Material', 'PETG / PLA cetak 3D'],
+         ['Konektivitas', 'Bluetooth Low Energy'],
+         ['Panjang model', '±62 cm, socket ke ujung jari'],
+         ['Peran aplikasi', '4 peran, 19 halaman']]
+          .map(function (r) {
+            return '<div><span>' + r[0] + '</span><span>' + r[1] + '</span></div>';
+          }).join('') +
+      '</div></div>',
+
+    teknis:
+      '<div class="card"><div class="eyebrow">Di balik layar</div>' +
+      '<h2>Dibangun terbuka, tanpa kotak hitam</h2>' +
+      '<div class="tiles">' +
+        '<div class="tile"><h3>Tanpa framework, tanpa build</h3>' +
+        '<p>Seluruh aplikasi berupa HTML, CSS, dan JavaScript biasa. Satu-satunya ' +
+        'pustaka pihak ketiga adalah three.js, di-<i>vendor</i> lokal dan dimuat ' +
+        'hanya pada halaman ber-3D.</p></div>' +
+        '<div class="tile"><h3>Model 3D dibangkitkan skrip</h3>' +
+        '<p>Geometri lengan tidak dipahat manual, melainkan dihasilkan skrip Python ' +
+        'di Blender. Satu angka diubah, model tercetak ulang konsisten — penting ' +
+        'untuk alat yang harus pas dengan tubuh berbeda-beda.</p></div>' +
+        '<div class="tile"><h3>Data tinggal di perangkat</h3>' +
+        '<p>Demo berjalan penuh di peramban dengan simulator perangkat. Tidak ada ' +
+        'data pasien sungguhan, dan tidak ada yang dikirim ke server mana pun.</p></div>' +
+        '<div class="tile"><h3>Modular dan dapat diperbaiki</h3>' +
+        '<p>Tangan, selongsong lengan bawah, sampai soket dapat dicetak ulang dan ' +
+        'ditukar sendiri. Kerusakan satu bagian tidak berarti mengganti seluruh alat.</p></div>' +
+      '</div></div>',
+
+    outro:
+      '<div class="card hero">' +
+      '<h1 style="font-size:64px;letter-spacing:-.02em;text-indent:0">Coba sendiri</h1>' +
+      '<div class="ln"></div>' +
+      '<p>Demo berjalan penuh di peramban, dengan simulator perangkat ' +
+      'dan data penelitian bawaan.</p>' +
+      '<div class="url">asta-id.web.app</div>' +
+      '<div class="note">Data demo tersimpan lokal &middot; tidak dikirim ke server</div></div>',
+  };
+
+  /* ---------------- Perakitan panggung ---------------- */
+
   var brand =
     '<div class="brand"><span class="mark">' + LOGO + '</span>' +
     '<span><span class="nm">ASTA</span>' +
@@ -370,46 +795,33 @@
   var frame = '<iframe id="app" src="../../' + esc(src) + '" ' +
     'title="Pratinjau aplikasi ASTA"></iframe>';
 
-  if (card) {
-    var BIG =
-      '<svg viewBox="0 0 32 32" fill="none">' +
-      '<path d="M11 21V9.5a2.2 2.2 0 0 1 4.4 0V19" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
-      '<path d="M15.4 13.6V8a2.2 2.2 0 0 1 4.4 0v11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
-      '<path d="M19.8 14.4v-2.2a2.2 2.2 0 0 1 4.4 0V19a8 8 0 0 1-8 8h-1.6A7.8 7.8 0 0 1 7 19.2" ' +
-      'stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
-      '<path d="M2 7.5h3l1.6-3.2L9 10l1.6-2.5h2" stroke="#a8ffe8" stroke-width="2" ' +
-      'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var info =
+    '<div class="info">' +
+      (badge ? '<span class="badge">' + esc(badge) + '</span>' : '') +
+      '<h1>' + esc(title) + '</h1>' +
+      '<p class="sub">' + esc(sub) + '</p>' +
+      '<div class="rule"></div>' +
+      '<ul class="points">' + points.map(function (p) {
+        return '<li><span class="tick">' + TICK + '</span><span>' + esc(p) + '</span></li>';
+      }).join('') + '</ul>' +
+    '</div>';
 
-    document.getElementById('stage').innerHTML = card === 'intro'
-      ? '<div class="card"><span class="mk">' + BIG + '</span>' +
-        '<h1>ASTA</h1><div class="tg">Telerehabilitasi Lengan Bionik</div>' +
-        '<div class="ln"></div>' +
-        '<p>Lengan bionik modular non-invasif, terhubung dengan tim klinis.</p>' +
-        '<div class="note">Purwarupa penelitian &middot; bukan alat diagnostik</div></div>'
-      : '<div class="card">' +
-        '<h1 style="font-size:64px">Coba sendiri</h1>' +
-        '<div class="ln"></div>' +
-        '<p>Demo berjalan penuh di peramban, dengan simulator perangkat ' +
-        'dan data penelitian bawaan.</p>' +
-        '<div class="url">asta-id.web.app</div>' +
-        '<div class="note">Data demo tersimpan lokal &middot; tidak dikirim ke server</div></div>';
+  if (card) {
+    document.getElementById('stage').innerHTML = CARDS[card] || CARDS.intro;
   } else if (variant === 'desktop') {
     document.getElementById('stage').innerHTML =
-      brand + counter +
+      brand + counter + info +
       '<div class="win">' +
         '<div class="bar">' +
           '<span class="dot" style="background:#ff5f57"></span>' +
           '<span class="dot" style="background:#febc2e"></span>' +
           '<span class="dot" style="background:#28c840"></span>' +
-          '<span class="url">asta-id.web.app/' + esc(src) + '</span>' +
+          '<span class="addr">asta-id.web.app/' + esc(src) + '</span>' +
         '</div>' + frame +
-      '</div>' +
-      '<div class="cap"><h1>' + esc(title) + '</h1><p>' + esc(sub) + '</p></div>';
+      '</div>';
   } else {
     document.getElementById('stage').innerHTML =
-      brand + counter +
-      '<div class="panel"><div class="rule"></div>' +
-        '<h1>' + esc(title) + '</h1><p>' + esc(sub) + '</p></div>' +
+      brand + counter + info +
       '<div class="phone"><div class="screen">' +
         '<div class="sysbar"><span class="notch"></span>' +
           '<span>09:41</span>' +
@@ -422,6 +834,25 @@
   window.setProgress = function (p) {
     document.querySelector('.prog').style.setProperty('--p', p);
   };
+
+  /* Kemunculan butir penjelas dihitung dari waktu adegan, bukan dari
+     transisi CSS: nilainya disetel ulang tiap frame sehingga gerakannya
+     terkunci pada laju video dan identik bila perekaman diulang. */
+  var LI = Array.prototype.slice.call(document.querySelectorAll('.points li'));
+  var DELAY = 0.9;    // butir pertama mulai muncul pada detik ke-0,9
+  var STAGGER = 0.95; // jarak antar butir
+  var DUR = 0.5;      // lama satu butir muncul
+
+  window.setTime = function (t) {
+    for (var i = 0; i < LI.length; i++) {
+      var a = (t - (DELAY + i * STAGGER)) / DUR;
+      a = a < 0 ? 0 : a > 1 ? 1 : a;
+      a = 1 - Math.pow(1 - a, 3);            // easeOutCubic
+      LI[i].style.opacity = a.toFixed(4);
+      LI[i].style.transform = 'translateY(' + ((1 - a) * 14).toFixed(2) + 'px)';
+    }
+  };
+  window.setTime(0);
 </script>
 </body>
 </html>

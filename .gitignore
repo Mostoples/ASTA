@@ -34,3 +34,9 @@ video-showreel-clips/
 
 # Riwayat undo capcut-cli, bukan bagian proyeknya.
 .capcut-cli-history/
+
+# ---- Rekaman kamera mentah ----
+# Video dokumentasi dari ponsel beserta hasil konversinya; ukurannya
+# ratusan MB sampai GB dan bukan bagian dari kode aplikasi.
+ASTA rekaman/
+ASTA rekaman MP4/

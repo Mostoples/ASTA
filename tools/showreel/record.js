@@ -6,9 +6,12 @@
    ukuran aslinya, jadi satu tangkapan layar panggung = satu frame
    video. Tidak ada langkah compositing terpisah.
 
-   Scroll dihitung per frame lalu disetel langsung (bukan animasi
-   CSS), sehingga gerakannya terikat pada laju frame video dan
-   bebas jitter.
+   Scroll dan kemunculan butir penjelas dihitung per frame lalu
+   disetel langsung (bukan animasi CSS), sehingga gerakannya
+   terikat pada laju frame video dan bebas jitter.
+
+   Kartu penjelas direkam sebagai satu frame diam; lama tayangnya
+   diteruskan ke perakit lewat manifest.
 
    Jalankan:
      node tools/showreel/record.js --variant desktop
@@ -18,7 +21,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
-const { SCENES, ROLE } = require('./scenes');
+const { SCENES, ROLE, ROLE_LABEL, CARDS, SEQUENCE } = require('./scenes');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const PORT = 8231;
@@ -101,37 +104,38 @@ function easeInOutCubic(t) {
   const page = await ctx.newPage();
   page.on('pageerror', e => console.log('   ! panggung: ' + e.message.slice(0, 80)));
 
+  // --only 03,07  merekam sebagian adegan saja (untuk pemeriksaan cepat).
+  // Kartu ikut dilewati supaya pemeriksaan tetap cepat.
+  const only = arg('only', '');
+  const pick = only ? new Set(only.split(',').map(x => x.trim())) : null;
+
+  const byId = Object.fromEntries(SCENES.map(s => [s.id, s]));
+  const order = SEQUENCE.filter(it =>
+    it.type === 'c' ? (!pick && CARDS[it.id]) : (byId[it.id] && (!pick || pick.has(it.id))));
+
   const manifest = [];
-  const totalSec = SCENES.reduce((a, s) => a + s.sec, 0);
+  const totalSec = order.reduce((a, it) =>
+    a + (it.type === 'c' ? CARDS[it.id].sec : byId[it.id].sec), 0);
   let elapsed = 0;
 
-  /* Kartu pembuka dan penutup: satu frame diam yang ditahan beberapa
-     detik. Cukup merekam satu berkas lalu memberi tahu perakit berapa
-     lama kartu ditahan — jauh lebih hemat daripada menulis 75 salinan. */
-  async function recordCard(kind, sec) {
-    const dir = path.join(OUT, 'card-' + kind);
+  /* Kartu penjelas: satu frame diam yang ditahan beberapa detik.
+     Cukup merekam satu berkas lalu memberi tahu perakit berapa lama
+     kartu ditahan — jauh lebih hemat daripada menulis ratusan salinan. */
+  async function recordCard(id, sec) {
+    const dir = path.join(OUT, 'card-' + id);
     fs.mkdirSync(dir, { recursive: true });
     await page.goto('http://localhost:' + PORT + '/tools/showreel/stage.html?' +
-      new URLSearchParams({ variant, card: kind }), { waitUntil: 'networkidle' });
-    await page.evaluate(v => window.setProgress(v), kind === 'intro' ? 0 : 1);
-    await page.waitForTimeout(400);
+      new URLSearchParams({ variant, card: id }), { waitUntil: 'networkidle' });
+    await page.waitForTimeout(420);
     await page.screenshot({
       path: path.join(dir, 'still.jpg'), type: 'jpeg', quality: 95,
       clip: { x: 0, y: 0, width: W, height: H },
     });
-    console.log('  --  kartu ' + kind.padEnd(21) + ' ' + sec + 's');
-    return { id: 'card-' + kind, kind: 'card', sec };
+    console.log('  --  kartu ' + id.padEnd(23) + ' ' + sec + 's');
+    return { id: 'card-' + id, kind: 'card', sec, title: 'Kartu ' + id };
   }
 
-  // --only 03,07  merekam sebagian adegan saja (untuk pemeriksaan cepat)
-  const only = arg('only', '');
-  const pick = only ? new Set(only.split(',').map(x => x.trim())) : null;
-
-  if (!pick) manifest.push(await recordCard('intro', 2.6));
-
-  for (let si = 0; si < SCENES.length; si++) {
-    const s = SCENES[si];
-    if (pick && !pick.has(s.id)) continue;
+  async function recordScene(s, num, of) {
     const dir = path.join(OUT, 'scene-' + s.id);
     fs.mkdirSync(dir, { recursive: true });
 
@@ -149,12 +153,15 @@ function easeInOutCubic(t) {
       }
     }, sess);
 
-    const url = 'http://localhost:' + PORT + '/tools/showreel/stage.html?' +
-      new URLSearchParams({
-        variant, src: s.f, title: s.title, sub: s.sub,
-        n: String(si + 1), of: String(SCENES.length),
-      });
-    await page.goto(url, { waitUntil: 'networkidle' });
+    const params = {
+      variant, src: s.f, title: s.title, sub: s.sub,
+      badge: ROLE_LABEL[String(s.role)] || '',
+      n: String(num), of: String(of),
+    };
+    (s.points || []).forEach((p, i) => { params['p' + (i + 1)] = p; });
+
+    await page.goto('http://localhost:' + PORT + '/tools/showreel/stage.html?' +
+      new URLSearchParams(params), { waitUntil: 'networkidle' });
 
     // Sembunyikan bilah gulir di dalam iframe dan tunggu isinya mapan
     await page.evaluate(() => {
@@ -207,12 +214,13 @@ function easeInOutCubic(t) {
         const t = Math.min(1, Math.max(0, (f - holdF) / moveF));
         y = Math.round(plan.target * easeInOutCubic(t));
       }
-      await page.evaluate(({ y, p }) => {
+      await page.evaluate(({ y, p, t }) => {
         const sc = window.__sc;
         if (sc.kind === 'doc') sc.el.ownerDocument.defaultView.scrollTo(0, y);
         else sc.el.scrollTop = y;
         window.setProgress(p);
-      }, { y, p: (elapsed + f / FPS) / totalSec });
+        window.setTime(t);
+      }, { y, p: (elapsed + f / FPS) / totalSec, t: f / FPS });
 
       await page.screenshot({
         path: path.join(dir, 'f-' + String(f).padStart(4, '0') + '.jpg'),
@@ -221,14 +229,25 @@ function easeInOutCubic(t) {
       });
     }
 
-    elapsed += s.sec;
-    manifest.push({ id: s.id, file: s.f, title: s.title, sub: s.sub,
-      frames, sec: s.sec, scrollMax: plan.max, scrollTo: plan.target });
     console.log(`  ${s.id}  ${s.title.padEnd(24)} ${frames} frame` +
       (plan.target ? `  gulir 0→${plan.target}px` : '  diam'));
+    return { id: s.id, kind: 'scene', file: s.f, title: s.title, sub: s.sub,
+      frames, sec: s.sec, scrollMax: plan.max, scrollTo: plan.target };
   }
 
-  if (!pick) manifest.push(await recordCard('outro', 3.2));
+  const sceneCount = order.filter(it => it.type === 's').length;
+  let num = 0;
+
+  for (const it of order) {
+    if (it.type === 'c') {
+      manifest.push(await recordCard(it.id, CARDS[it.id].sec));
+      elapsed += CARDS[it.id].sec;
+    } else {
+      const s = byId[it.id];
+      manifest.push(await recordScene(s, ++num, sceneCount));
+      elapsed += s.sec;
+    }
+  }
 
   fs.writeFileSync(path.join(OUT, 'manifest.json'),
     JSON.stringify({ variant, fps: FPS, w: W, h: H, scenes: manifest }, null, 2));

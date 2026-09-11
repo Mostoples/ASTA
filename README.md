@@ -171,16 +171,30 @@ Semua hiasan `aria-hidden`, tidak menerima pointer, dan otomatis dilepas pada
 
 ## Video showreel
 
-Dua showreel 1920x1080 (16:9, 30 fps, ±92 detik) menelusuri 15 halaman penting
-sambil menggulirkannya:
+Dua showreel 1920x1080 (16:9, 30 fps, ±3 menit) yang disusun sebagai profil
+perusahaan: masalah → produk → cara kerja → pemakaian per peran → spesifikasi
+→ ajakan mencoba.
 
 | Berkas | Isi |
 |---|---|
 | `ASTA-showreel-desktop-1080p.mp4` | Aplikasi dalam mockup jendela peramban |
-| `ASTA-showreel-android-1080p.mp4` | Aplikasi dalam mockup ponsel, panel judul di sisi kiri |
+| `ASTA-showreel-android-1080p.mp4` | Aplikasi dalam mockup ponsel |
 
 Keduanya dirakit dari sumber yang sama; hanya lebar iframe-nya yang berbeda,
 sehingga tata letak ponsel dan desktop tampil apa adanya.
+
+**Susunannya** berselang antara dua jenis segmen:
+
+- **Adegan halaman** — 15 halaman aplikasi yang digulirkan, masing-masing
+  didampingi badge peran, judul, ringkasan, dan tiga butir penjelas yang muncul
+  bergiliran.
+- **Kartu penjelas** — 9 kartu diam berisi paparan: masalah yang dituju, empat
+  langkah cara kerja beserta rantai pemrosesan sinyal, pembatas tiap bagian,
+  tabel spesifikasi, dan catatan teknis di balik layar.
+
+Seluruh angka pada kartu diambil dari konfigurasi alat yang sesungguhnya
+(`js/core/device.js`) dan dari model Blender. Tidak ada klaim jumlah pengguna,
+testimoni, maupun hasil klinis — ASTA masih purwarupa penelitian.
 
 ```bash
 node tools/showreel/record.js --variant desktop   # frame -> video-showreel/
@@ -191,21 +205,27 @@ node tools/showreel/verify.js                     # periksa kedua video
 
 Ganti `desktop` dengan `android` untuk varian satunya. Tambahkan
 `--only 03,07` pada `record.js` untuk merekam sebagian adegan saja saat
-memeriksa perubahan.
+memeriksa perubahan; kartu ikut dilewati supaya pemeriksaan tetap cepat.
 
-Daftar halaman, durasi, dan perilaku gulirnya ada di
-[`tools/showreel/scenes.js`](tools/showreel/scenes.js).
+Memerlukan `playwright`. Bila belum ada:
+`PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm i --no-save playwright` — perekam
+memakai Chromium yang sudah ada di `%LOCALAPPDATA%\ms-playwright`.
+
+Daftar halaman, butir penjelas, durasi, dan urutan tayangnya ada di
+[`tools/showreel/scenes.js`](tools/showreel/scenes.js); isi kartu ada pada objek
+`CARDS` di [`tools/showreel/stage.html`](tools/showreel/stage.html).
 
 **Cara kerjanya.** `tools/showreel/stage.html` adalah panggung 1920x1080 yang
 memuat aplikasi di dalam `<iframe>` pada ukuran aslinya, lengkap dengan mockup
-perangkat, lockup merek, judul adegan, dan bilah progres. Satu tangkapan layar
+perangkat, panel penjelas, lockup merek, dan bilah progres. Satu tangkapan layar
 panggung itu sudah menjadi satu frame video yang final — tidak ada tahap
 compositing terpisah, dan teksnya tetap tajam 1:1 tanpa penskalaan.
 
-Posisi gulir dihitung per frame lalu disetel langsung, bukan lewat animasi CSS.
-Dengan begitu gerakannya terikat pada laju frame video dan bebas jitter.
+Posisi gulir dan kemunculan butir penjelas dihitung per frame lalu disetel
+langsung, bukan lewat animasi CSS. Dengan begitu gerakannya terikat pada laju
+frame video, bebas jitter, dan identik bila perekaman diulang.
 
-Frame mentah (~1,2 GB per varian) dan klip per adegan tidak masuk repositori;
+Frame mentah (±1,7 GB per varian) dan klip per adegan tidak masuk repositori;
 keduanya dapat dibuat ulang dengan perintah di atas. Proyek CapCut
 (`capcut-showreel-*/`) menyimpan salinan klipnya sendiri, jadi dapat langsung
 dibuka untuk menambah musik atau menyunting lanjut.
