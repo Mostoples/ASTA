@@ -47,3 +47,7 @@ ASTA REKAMAN FIX MP4/
 # Hasil build.py (±160 MB) dan dapat dibangun ulang dari materi rekaman;
 # yang disimpan hanyalah skrip perakitnya di tools/asta-video/.
 ASTA - Video Semifinal HRIE 2026.mp4
+
+# ---- Cache Python ----
+__pycache__/
+*.pyc
