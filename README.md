@@ -169,6 +169,49 @@ Semua hiasan `aria-hidden`, tidak menerima pointer, dan otomatis dilepas pada
 
 ---
 
+## Video showreel
+
+Dua showreel 1920x1080 (16:9, 30 fps, ±92 detik) menelusuri 15 halaman penting
+sambil menggulirkannya:
+
+| Berkas | Isi |
+|---|---|
+| `ASTA-showreel-desktop-1080p.mp4` | Aplikasi dalam mockup jendela peramban |
+| `ASTA-showreel-android-1080p.mp4` | Aplikasi dalam mockup ponsel, panel judul di sisi kiri |
+
+Keduanya dirakit dari sumber yang sama; hanya lebar iframe-nya yang berbeda,
+sehingga tata letak ponsel dan desktop tampil apa adanya.
+
+```bash
+node tools/showreel/record.js --variant desktop   # frame -> video-showreel/
+node tools/showreel/build.js  --variant desktop   # frame -> MP4
+node tools/showreel/capcut.js --variant desktop   # MP4 -> proyek CapCut
+node tools/showreel/verify.js                     # periksa kedua video
+```
+
+Ganti `desktop` dengan `android` untuk varian satunya. Tambahkan
+`--only 03,07` pada `record.js` untuk merekam sebagian adegan saja saat
+memeriksa perubahan.
+
+Daftar halaman, durasi, dan perilaku gulirnya ada di
+[`tools/showreel/scenes.js`](tools/showreel/scenes.js).
+
+**Cara kerjanya.** `tools/showreel/stage.html` adalah panggung 1920x1080 yang
+memuat aplikasi di dalam `<iframe>` pada ukuran aslinya, lengkap dengan mockup
+perangkat, lockup merek, judul adegan, dan bilah progres. Satu tangkapan layar
+panggung itu sudah menjadi satu frame video yang final — tidak ada tahap
+compositing terpisah, dan teksnya tetap tajam 1:1 tanpa penskalaan.
+
+Posisi gulir dihitung per frame lalu disetel langsung, bukan lewat animasi CSS.
+Dengan begitu gerakannya terikat pada laju frame video dan bebas jitter.
+
+Frame mentah (~1,2 GB per varian) dan klip per adegan tidak masuk repositori;
+keduanya dapat dibuat ulang dengan perintah di atas. Proyek CapCut
+(`capcut-showreel-*/`) menyimpan salinan klipnya sendiri, jadi dapat langsung
+dibuka untuk menambah musik atau menyunting lanjut.
+
+---
+
 ## Pengujian
 
 ```bash

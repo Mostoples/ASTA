@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ASTA — panggung showreel</title>
+<!--
+  Panggung perekaman 1920x1080.
+
+  Aplikasi dimuat di dalam <iframe> pada ukuran aslinya (tanpa
+  penskalaan CSS), sehingga satu tangkapan layar panggung ini sudah
+  menjadi satu frame video yang final: tidak ada langkah compositing
+  terpisah, dan teksnya tetap tajam 1:1.
+
+  Parameter kueri:
+    src      berkas aplikasi yang dimuat, mis. pasien-dashboard.html
+    variant  desktop | android
+    title    judul adegan
+    sub      keterangan adegan
+    n, of    nomor adegan dan totalnya
+-->
+<style>
+  :root {
+    --ink: #0a1b36;
+    --ink-2: #12294b;
+    --pri: #2b6cde;
+    --pri-400: #4a87f2;
+    --teal: #10a5a5;
+    --paper: #e8eef7;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: var(--ink);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #fff;
+    /* Perekaman memakai deviceScaleFactor 1; matikan pemulusan
+       yang bisa menggeser tata letak antar frame. */
+    text-rendering: geometricPrecision;
+  }
+
+  /* ---------------- Latar ---------------- */
+  .bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(1100px 760px at 12% -10%, #1d4d9e 0%, transparent 62%),
+      radial-gradient(900px 700px at 96% 108%, #0d6b6b 0%, transparent 58%),
+      linear-gradient(155deg, var(--ink) 0%, var(--ink-2) 55%, #0a1b36 100%);
+  }
+  .bg::after {
+    /* Kisi titik halus supaya bidang gelap tidak terasa datar */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.16) 1px, transparent 1px);
+    background-size: 46px 46px;
+    opacity: .3;
+    -webkit-mask-image: radial-gradient(1400px 900px at 50% 40%, #000 20%, transparent 78%);
+    mask-image: radial-gradient(1400px 900px at 50% 40%, #000 20%, transparent 78%);
+  }
+
+  /* ---------------- Lockup merek ---------------- */
+  .brand {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand .mark {
+    width: 48px; height: 48px;
+    border-radius: 15px;
+    display: grid; place-items: center;
+    background: linear-gradient(140deg, var(--pri-400), #17428f);
+    box-shadow: 0 10px 22px -8px #0a2148;
+  }
+  .brand .nm { font-size: 25px; font-weight: 700; letter-spacing: .16em; }
+  .brand .tg {
+    font-size: 11.5px; letter-spacing: .2em; text-transform: uppercase;
+    opacity: .62; font-weight: 600; margin-top: 3px;
+  }
+
+  /* ---------------- Nomor adegan ---------------- */
+  .counter {
+    position: absolute;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    letter-spacing: .22em;
+    font-weight: 700;
+    opacity: .5;
+  }
+
+  /* ---------------- Bilah progres ---------------- */
+  .prog {
+    position: absolute;
+    left: 0; bottom: 0;
+    height: 5px; width: 100%;
+    background: rgba(255,255,255,.09);
+  }
+  .prog i {
+    display: block; height: 100%;
+    width: calc(var(--p, 0) * 100%);
+    background: linear-gradient(90deg, var(--pri-400), var(--teal));
+  }
+
+  /* ---------------- Kartu pembuka & penutup ---------------- */
+  .card-mode .brand, .card-mode .counter { display: none; }
+  .card {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+    padding: 0 200px;
+  }
+  .card .mk {
+    width: 96px; height: 96px;
+    border-radius: 30px;
+    display: grid; place-items: center;
+    margin-bottom: 42px;
+    background: linear-gradient(140deg, var(--pri-400), #17428f);
+    box-shadow: 0 22px 48px -14px #0a2148;
+  }
+  .card .mk svg { width: 52px; height: 52px; }
+  .card h1 {
+    font-size: 88px;
+    letter-spacing: .2em;
+    font-weight: 700;
+    margin: 0 0 6px;
+    text-indent: .2em;
+  }
+  .card .tg {
+    font-size: 17px;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    opacity: .6;
+    font-weight: 600;
+  }
+  .card .ln {
+    width: 96px; height: 4px; border-radius: 3px;
+    margin: 44px 0;
+    background: linear-gradient(90deg, var(--pri-400), var(--teal));
+  }
+  .card p {
+    font-size: 27px;
+    line-height: 1.6;
+    opacity: .78;
+    max-width: 30ch;
+    margin: 0;
+    font-weight: 400;
+  }
+  .card .url {
+    margin-top: 46px;
+    font-size: 22px;
+    letter-spacing: .05em;
+    font-weight: 650;
+    color: #8fc7ff;
+  }
+  .card .note {
+    position: absolute;
+    left: 0; right: 0; bottom: 74px;
+    font-size: 15px;
+    opacity: .42;
+    font-weight: 400;
+  }
+
+  /* =========================================================
+     Varian DESKTOP
+     Mockup jendela peramban, iframe 1520x800 pada skala 1:1.
+     ========================================================= */
+  .desktop .brand { left: 96px; top: 44px; }
+  .desktop .counter { right: 100px; top: 60px; }
+
+  .desktop .win {
+    position: absolute;
+    left: 200px; top: 118px;
+    width: 1520px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 44px 90px -28px rgba(0,0,0,.68), 0 0 0 1px rgba(255,255,255,.1);
+  }
+  .desktop .bar {
+    height: 42px;
+    display: flex; align-items: center; gap: 9px;
+    padding: 0 18px;
+    background: #dfe7f2;
+    border-bottom: 1px solid #cbd7e8;
+  }
+  .desktop .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .desktop .url {
+    flex: 1;
+    margin-left: 14px;
+    height: 25px;
+    border-radius: 13px;
+    background: #f2f6fc;
+    display: flex; align-items: center;
+    padding: 0 13px;
+    font-size: 12.5px;
+    color: #5c728f;
+    letter-spacing: .01em;
+  }
+  .desktop iframe { display: block; width: 1520px; height: 800px; border: 0; }
+
+  .desktop .cap { position: absolute; left: 200px; top: 972px; width: 1520px; }
+  .desktop .cap h1 { font-size: 38px; margin: 0; letter-spacing: -.018em; font-weight: 700; }
+  .desktop .cap p {
+    margin: 7px 0 0;
+    font-size: 18.5px;
+    opacity: .68;
+    font-weight: 400;
+  }
+
+  /* =========================================================
+     Varian ANDROID
+     Panel teks di kiri, mockup ponsel 393x830 skala 1:1 di kanan.
+     ========================================================= */
+  .android .brand { left: 128px; top: 96px; }
+  .android .counter { left: 128px; bottom: 110px; }
+
+  .android .panel {
+    position: absolute;
+    left: 128px; top: 300px;
+    width: 830px;
+  }
+  .android .panel h1 {
+    font-size: 62px;
+    line-height: 1.06;
+    margin: 0;
+    letter-spacing: -.028em;
+    font-weight: 700;
+  }
+  .android .panel p {
+    margin: 24px 0 0;
+    font-size: 24px;
+    line-height: 1.55;
+    opacity: .7;
+    max-width: 22ch;
+    font-weight: 400;
+  }
+  .android .rule {
+    width: 74px; height: 4px; border-radius: 3px;
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, var(--pri-400), var(--teal));
+  }
+
+  .android .phone {
+    position: absolute;
+    left: 1168px; top: 92px;
+    width: 441px; height: 878px;
+    border-radius: 52px;
+    padding: 24px;
+    background: linear-gradient(160deg, #2d3746, #151c27 60%, #0d131c);
+    box-shadow: 0 46px 88px -26px rgba(0,0,0,.78), 0 0 0 1px rgba(255,255,255,.08);
+  }
+  .android .screen {
+    position: relative;
+    width: 393px; height: 830px;
+    border-radius: 32px;
+    overflow: hidden;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+  }
+  /* Bilah status sistem: menjaga poni kamera tidak menimpa header
+     aplikasi, sekaligus membuat mockup terbaca sebagai ponsel sungguhan. */
+  .android .sysbar {
+    position: relative;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    background: var(--paper);
+    font-size: 12.5px;
+    font-weight: 650;
+    color: #16233a;
+    letter-spacing: .01em;
+    z-index: 3;
+  }
+  .android .sysbar .ic { display: flex; align-items: center; gap: 5px; opacity: .8; }
+  .android iframe { display: block; flex: 1 1 auto; width: 393px; border: 0; }
+  /* Poni kamera, duduk di dalam bilah status */
+  .android .notch {
+    position: absolute;
+    left: 50%; top: 5px;
+    transform: translateX(-50%);
+    width: 84px; height: 24px;
+    border-radius: 13px;
+    background: #0d131c;
+    z-index: 4;
+  }
+  /* Garis geser bawah */
+  .android .home {
+    position: absolute;
+    left: 50%; bottom: 8px;
+    transform: translateX(-50%);
+    width: 116px; height: 4px;
+    border-radius: 3px;
+    background: rgba(20,35,58,.34);
+    z-index: 3;
+  }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="prog"><i></i></div>
+<div id="stage"></div>
+
+<script>
+  var q = new URLSearchParams(location.search);
+  var variant = q.get('variant') === 'android' ? 'android' : 'desktop';
+  var src = q.get('src') || 'index.html';
+  var title = q.get('title') || '';
+  var sub = q.get('sub') || '';
+  var n = q.get('n') || '1';
+  var of = q.get('of') || '1';
+
+  var card = q.get('card');   // 'intro' | 'outro' | kosong
+  document.body.className = variant + (card ? ' card-mode' : '');
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  /* Lambang ASTA — sama dengan Shell.logo() di aplikasi */
+  var LOGO =
+    '<svg width="26" height="26" viewBox="0 0 32 32" fill="none">' +
+    '<path d="M11 21V9.5a2.2 2.2 0 0 1 4.4 0V19" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
+    '<path d="M15.4 13.6V8a2.2 2.2 0 0 1 4.4 0v11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
+    '<path d="M19.8 14.4v-2.2a2.2 2.2 0 0 1 4.4 0V19a8 8 0 0 1-8 8h-1.6A7.8 7.8 0 0 1 7 19.2" ' +
+    'stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
+    '<path d="M2 7.5h3l1.6-3.2L9 10l1.6-2.5h2" stroke="#a8ffe8" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  /* Ikon bilah status ponsel: sinyal, wifi, baterai */
+  var SYSICONS =
+    '<svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor">' +
+      '<rect x="0" y="7" width="2.6" height="4" rx="1"/>' +
+      '<rect x="4.1" y="5" width="2.6" height="6" rx="1"/>' +
+      '<rect x="8.2" y="2.5" width="2.6" height="8.5" rx="1"/>' +
+      '<rect x="12.3" y="0" width="2.6" height="11" rx="1"/></svg>' +
+    '<svg width="15" height="11" viewBox="0 0 16 12" fill="none" stroke="currentColor" ' +
+      'stroke-width="1.7" stroke-linecap="round">' +
+      '<path d="M1 4.2a11 11 0 0 1 14 0M3.6 7a7.2 7.2 0 0 1 8.8 0"/>' +
+      '<circle cx="8" cy="10" r="1" fill="currentColor" stroke="none"/></svg>' +
+    '<svg width="22" height="11" viewBox="0 0 24 12" fill="none">' +
+      '<rect x="0.8" y="0.8" width="19" height="10.4" rx="3" stroke="currentColor" ' +
+        'stroke-width="1.4" opacity=".5"/>' +
+      '<rect x="2.6" y="2.6" width="13" height="6.8" rx="1.6" fill="currentColor"/>' +
+      '<path d="M21.6 4.2v3.6a2 2 0 0 0 0-3.6z" fill="currentColor" opacity=".5"/></svg>';
+
+  var brand =
+    '<div class="brand"><span class="mark">' + LOGO + '</span>' +
+    '<span><span class="nm">ASTA</span>' +
+    '<span class="tg" style="display:block">Telerehabilitasi Lengan Bionik</span></span></div>';
+
+  var counter = '<div class="counter">' + esc(n).padStart(2, '0') + ' / ' +
+    esc(of).padStart(2, '0') + '</div>';
+
+  /* Tanpa scrolling="no": atribut itu mematikan gulir programatik.
+     Bilah gulirnya disembunyikan perekam lewat CSS yang disuntikkan. */
+  var frame = '<iframe id="app" src="../../' + esc(src) + '" ' +
+    'title="Pratinjau aplikasi ASTA"></iframe>';
+
+  if (card) {
+    var BIG =
+      '<svg viewBox="0 0 32 32" fill="none">' +
+      '<path d="M11 21V9.5a2.2 2.2 0 0 1 4.4 0V19" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<path d="M15.4 13.6V8a2.2 2.2 0 0 1 4.4 0v11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<path d="M19.8 14.4v-2.2a2.2 2.2 0 0 1 4.4 0V19a8 8 0 0 1-8 8h-1.6A7.8 7.8 0 0 1 7 19.2" ' +
+      'stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>' +
+      '<path d="M2 7.5h3l1.6-3.2L9 10l1.6-2.5h2" stroke="#a8ffe8" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    document.getElementById('stage').innerHTML = card === 'intro'
+      ? '<div class="card"><span class="mk">' + BIG + '</span>' +
+        '<h1>ASTA</h1><div class="tg">Telerehabilitasi Lengan Bionik</div>' +
+        '<div class="ln"></div>' +
+        '<p>Lengan bionik modular non-invasif, terhubung dengan tim klinis.</p>' +
+        '<div class="note">Purwarupa penelitian &middot; bukan alat diagnostik</div></div>'
+      : '<div class="card">' +
+        '<h1 style="font-size:64px">Coba sendiri</h1>' +
+        '<div class="ln"></div>' +
+        '<p>Demo berjalan penuh di peramban, dengan simulator perangkat ' +
+        'dan data penelitian bawaan.</p>' +
+        '<div class="url">asta-id.web.app</div>' +
+        '<div class="note">Data demo tersimpan lokal &middot; tidak dikirim ke server</div></div>';
+  } else if (variant === 'desktop') {
+    document.getElementById('stage').innerHTML =
+      brand + counter +
+      '<div class="win">' +
+        '<div class="bar">' +
+          '<span class="dot" style="background:#ff5f57"></span>' +
+          '<span class="dot" style="background:#febc2e"></span>' +
+          '<span class="dot" style="background:#28c840"></span>' +
+          '<span class="url">asta-id.web.app/' + esc(src) + '</span>' +
+        '</div>' + frame +
+      '</div>' +
+      '<div class="cap"><h1>' + esc(title) + '</h1><p>' + esc(sub) + '</p></div>';
+  } else {
+    document.getElementById('stage').innerHTML =
+      brand + counter +
+      '<div class="panel"><div class="rule"></div>' +
+        '<h1>' + esc(title) + '</h1><p>' + esc(sub) + '</p></div>' +
+      '<div class="phone"><div class="screen">' +
+        '<div class="sysbar"><span class="notch"></span>' +
+          '<span>09:41</span>' +
+          '<span class="ic">' + SYSICONS + '</span>' +
+        '</div>' + frame + '<span class="home"></span>' +
+      '</div></div>';
+  }
+
+  /* Dipanggil perekam untuk menggerakkan bilah progres */
+  window.setProgress = function (p) {
+    document.querySelector('.prog').style.setProperty('--p', p);
+  };
+</script>
+</body>
+</html>

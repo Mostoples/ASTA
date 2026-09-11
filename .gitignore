@@ -19,3 +19,18 @@ desktop.ini
 # ---- Log ----
 *.log
 firebase-debug.log
+
+# ---- Frame mentah showreel ----
+# Tiap varian menghasilkan ~1,5 GB frame JPEG perantara. Berkas ini
+# dapat dibuat ulang kapan saja dengan `node tools/showreel/record.js`,
+# jadi yang disimpan hanyalah klip dan video jadinya.
+video-showreel/
+
+# ---- Perantara showreel ----
+# Klip per adegan hanya bahan rakitan; proyek CapCut sudah menyimpan
+# salinannya sendiri di assets/video/, dan build.js membuatnya ulang
+# dari frame kapan pun diperlukan.
+video-showreel-clips/
+
+# Riwayat undo capcut-cli, bukan bagian proyeknya.
+.capcut-cli-history/
