@@ -51,3 +51,7 @@ ASTA - Video Semifinal HRIE 2026.mp4
 # ---- Cache Python ----
 __pycache__/
 *.pyc
+
+# Presentasi final (hasil tools/ppt)
+PRESENTASI FINAL HRIE 2026/
+tools/ppt/out/

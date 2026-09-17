@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ASTA — Presentasi Final HRIE 2026</title>
+<!--
+  Setiap <section class="slide"> berukuran 1920×1080.
+  .tx      = teks yang dijadikan kotak teks asli (bisa diedit) di PPTX
+  .vid     = posisi video yang ditanam di PPTX (data-src, data-poster)
+  data-notes pada <section> = naskah bicara (catatan pembicara)
+  Dirakit oleh tools/ppt/build.js dan tools/ppt/make_pptx.py
+-->
+<style>
+:root{
+  --bg:#e8eef7; --bg2:#dfe7f2; --card:#eaf0f8;
+  --sh-d:#c3d0e2; --sh-l:#ffffff;
+  --nm:18px 18px 40px var(--sh-d),-16px -16px 36px var(--sh-l);
+  --nm-s:9px 9px 20px var(--sh-d),-8px -8px 18px var(--sh-l);
+  --nm-in:inset 7px 7px 14px var(--sh-d),inset -7px -7px 14px var(--sh-l);
+  --blue:#2b6cde; --blue7:#17428f; --navy:#0f2f68; --cyan:#22c3e6; --teal:#10a5a5;
+  --orange:#f0a020; --violet:#7a5af8; --green:#1c9e6b;
+  --text:#16233a; --text2:#40546f; --text3:#6b7f99;
+  --grad:linear-gradient(120deg,#2b6cde 0%,#22c3e6 100%);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#9aa7b8}
+body{font-family:"Segoe UI",system-ui,sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.slide{position:relative;width:1920px;height:1080px;overflow:hidden;margin:0 auto 40px;
+  background:
+    radial-gradient(900px 600px at 8% -10%,rgba(43,108,222,.10),transparent 70%),
+    radial-gradient(800px 600px at 105% 110%,rgba(34,195,230,.12),transparent 70%),
+    var(--bg);
+  padding:92px 110px 0;page-break-after:always;break-after:page}
+@media print{html,body{background:none}.slide{margin:0}}
+@page{size:1920px 1080px;margin:0}
+
+/* ---------- tipografi ---------- */
+.eyebrow{font-size:21px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;color:var(--blue);line-height:28px}
+.h1{font-size:66px;line-height:78px;font-weight:700;letter-spacing:-.015em;margin:18px 0 0;color:var(--text)}
+.h1 em{font-style:normal;color:var(--blue)}
+.lead{font-size:28px;line-height:42px;color:var(--text2);margin:20px 0 0}
+.small{font-size:20px;line-height:28px;color:var(--text3)}
+
+/* ---------- komponen ---------- */
+.card{background:var(--card);border-radius:36px;box-shadow:var(--nm)}
+.card-s{background:var(--card);border-radius:26px;box-shadow:var(--nm-s)}
+.inset{background:var(--bg);border-radius:26px;box-shadow:var(--nm-in)}
+.ico{width:78px;height:78px;border-radius:24px;display:grid;place-items:center;background:var(--bg);box-shadow:var(--nm-s);color:var(--blue)}
+.ico svg{width:40px;height:40px}
+.chip{display:inline-block;padding:10px 24px;border-radius:999px;background:var(--bg);box-shadow:var(--nm-s);font-size:22px;line-height:30px;font-weight:600;color:var(--text2)}
+.grad-bar{height:8px;width:120px;border-radius:8px;background:var(--grad)}
+.photo{border-radius:30px;overflow:hidden;box-shadow:var(--nm)}
+.photo img{display:block;width:100%;height:100%;object-fit:cover}
+.foot{position:absolute;left:110px;right:110px;bottom:38px;display:flex;justify-content:space-between;align-items:center}
+.foot .l{font-size:17px;letter-spacing:.28em;text-transform:uppercase;color:var(--text3);font-weight:600}
+.foot .n{font-size:18px;font-weight:700;color:var(--text3)}
+.abs{position:absolute}
+
+/* ---------- mockup (gaya Danial) ---------- */
+.browser{border-radius:26px;overflow:hidden;background:#fff;box-shadow:var(--nm)}
+.browser .bar{height:54px;background:#f1f5fb;display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid #dfe7f2}
+.browser .dot{width:14px;height:14px;border-radius:50%}
+.browser .url{margin-left:18px;padding:5px 18px;border-radius:12px;background:#e6edf7;font:500 17px/24px Consolas,monospace;color:var(--text2)}
+.browser img{display:block;width:100%}
+.dotm{display:inline-block;width:26px;height:26px;border-radius:50%;flex:0 0 auto}
+.dotm.full{background:#8a9bb3}.dotm.none{box-shadow:inset 0 0 0 3px #b9c6d8}
+.dotm.half{background:linear-gradient(90deg,#8a9bb3 50%,transparent 50%);box-shadow:inset 0 0 0 3px #8a9bb3}
+.dotm.big{width:40px;height:40px}.dotm.asta.full{background:var(--grad);box-shadow:0 8px 18px -8px rgba(43,108,222,.9)}
+.vid{position:absolute;border-radius:24px;overflow:hidden;background:#0b1220;box-shadow:var(--nm)}
+.vid img{width:100%;height:100%;object-fit:cover;display:block}
+.vid .play{position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;
+  background:rgba(255,255,255,.88);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.vid .play::after{content:"";position:absolute;left:43px;top:32px;border-left:34px solid var(--blue);border-top:23px solid transparent;border-bottom:23px solid transparent}
+</style>
+</head>
+<body>
+
+<!-- =============================================================== 1. SAMPUL -->
+<section class="slide" id="s01" data-transition="fade" data-notes="(±15 detik)
+Assalamu'alaikum dan selamat pagi, Bapak dan Ibu dewan juri.
+Kami dari SMA Negeri 1 Surakarta, nomor peserta KRPS001, akan mempresentasikan ASTA — Adaptive Sensory-feedback Telerehabilitation Arm: lengan bionik modular non-invasif untuk rehabilitasi penyandang amputasi di Indonesia.">
+  <div class="abs" style="left:110px;top:96px;width:900px">
+    <img src="../asta-video/logo.png" style="height:150px;display:block" alt="">
+    <div class="eyebrow tx" style="margin-top:44px">Final HRIE 2026 · Kategori SMA</div>
+    <div class="tx" style="font-size:40px;line-height:50px;font-weight:600;color:var(--blue7);margin-top:26px">Adaptive Sensory-feedback Telerehabilitation Arm</div>
+    <div class="tx" style="font-size:64px;line-height:76px;font-weight:700;margin-top:16px;letter-spacing:-.015em">Lengan Bionik Modular Non-Invasif untuk Rehabilitasi Penyandang Amputasi di Indonesia</div>
+    <div class="grad-bar" style="margin-top:40px"></div>
+  </div>
+  <div class="abs" style="left:110px;top:858px;display:flex;gap:22px">
+    <span class="chip tx" style="color:var(--blue);font-weight:700">KRPS001</span>
+    <span class="chip tx">Naurora Dewi Andrianto</span>
+    <span class="chip tx">SMA Negeri 1 Surakarta</span>
+  </div>
+  <div class="abs photo" style="left:1100px;top:120px;width:710px;height:840px">
+    <img src="../../assets/foto/genggam-dekat.webp" style="object-position:47% 50%" alt="">
+  </div>
+  <div class="abs card-s" style="left:1030px;top:250px;padding:22px 30px;display:flex;gap:18px;align-items:center">
+    <div class="ico" style="width:62px;height:62px;border-radius:18px">SVG:wave</div>
+    <div><div class="tx" style="font-size:30px;line-height:36px;font-weight:700">4 kanal sEMG</div><div class="tx small">kendali dari niat gerak</div></div>
+  </div>
+  <div class="abs card-s" style="left:1040px;top:760px;padding:22px 30px;display:flex;gap:18px;align-items:center">
+    <div class="ico" style="width:62px;height:62px;border-radius:18px;color:var(--teal)">SVG:pulse</div>
+    <div><div class="tx" style="font-size:30px;line-height:36px;font-weight:700">Umpan balik haptik</div><div class="tx small">pengguna merasakan genggaman</div></div>
+  </div>
+  <div class="abs card-s" style="left:1560px;top:520px;padding:22px 30px;display:flex;gap:18px;align-items:center">
+    <div class="ico" style="width:62px;height:62px;border-radius:18px;color:var(--orange)">SVG:grip</div>
+    <div><div class="tx" style="font-size:30px;line-height:36px;font-weight:700">8 pola</div><div class="tx small">cengkeram</div></div>
+  </div>
+</section>
+
+<!-- =============================================================== 2. PEMBUKA -->
+<section class="slide" id="s02" data-transition="fade" data-notes="(±20 detik)
+Setiap hari kita menggenggam, mengangkat, dan menjangkau tanpa pernah memikirkannya.
+Bagi kita semua itu sederhana. Tetapi bagi penyandang amputasi tangan, setiap gerakan kecil ini menentukan kemandirian dalam aktivitas sehari-hari.">
+  <div class="eyebrow tx">Pembuka</div>
+  <div class="h1 tx">Setiap gerakan <em>memiliki arti.</em></div>
+  <div class="lead tx" style="max-width:1300px">Bagi kita sederhana. Bagi penyandang amputasi, gerakan-gerakan kecil ini menentukan kemandirian sehari-hari.</div>
+  <div class="abs" style="left:110px;top:430px;right:110px;display:grid;grid-template-columns:repeat(3,1fr);gap:56px">
+    <div>
+      <div class="photo" style="height:420px"><img src="../../assets/foto/genggam-bohlam.webp" alt=""></div>
+      <div class="tx" style="font-size:44px;line-height:54px;font-weight:700;margin-top:34px">01 &nbsp;Menggenggam</div>
+    </div>
+    <div>
+      <div class="photo" style="height:420px"><img src="../../assets/foto/genggam-benda.webp" alt=""></div>
+      <div class="tx" style="font-size:44px;line-height:54px;font-weight:700;margin-top:34px">02 &nbsp;Mengangkat</div>
+    </div>
+    <div>
+      <div class="photo" style="height:420px"><img src="../../assets/foto/jari-terbuka.webp" alt=""></div>
+      <div class="tx" style="font-size:44px;line-height:54px;font-weight:700;margin-top:34px">03 &nbsp;Menjangkau</div>
+    </div>
+  </div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">02</span></div>
+</section>
+
+<!-- =============================================================== 3. LATAR BELAKANG -->
+<section class="slide" id="s03" data-transition="fade" data-notes="(±35 detik)
+Keterbatasan akses terhadap teknologi asistif masih menjadi tantangan bagi penyandang amputasi di Indonesia.
+Ada tiga hambatan utama. Pertama biaya: lengan prostetik fungsional mahal. Kedua akses layanan: kontrol dan latihan menuntut perjalanan berulang ke pusat rehabilitasi. Ketiga, kebutuhan setiap pengguna berbeda: kondisi tungkai, kekuatan otot, dan tujuan rehabilitasinya tidak sama.
+Karena itu dibutuhkan teknologi asistif yang dapat menyesuaikan penggunanya dan terhubung dengan proses rehabilitasi.">
+  <div class="eyebrow tx">Latar belakang</div>
+  <div class="h1 tx" style="max-width:1500px">Teknologi asistif belum terjangkau oleh semua yang membutuhkannya.</div>
+  <div class="abs" style="left:110px;right:110px;top:400px;display:grid;grid-template-columns:repeat(3,1fr);gap:56px">
+    <div class="card" style="padding:50px 48px;height:380px">
+      <div class="ico" style="color:var(--orange)">SVG:coin</div>
+      <div class="tx" style="font-size:40px;line-height:50px;font-weight:700;margin-top:34px">Biaya</div>
+      <div class="tx" style="font-size:25px;line-height:38px;color:var(--text2);margin-top:14px">Lengan prostetik fungsional masih mahal sehingga sulit dimiliki.</div>
+    </div>
+    <div class="card" style="padding:50px 48px;height:380px">
+      <div class="ico" style="color:var(--teal)">SVG:road</div>
+      <div class="tx" style="font-size:40px;line-height:50px;font-weight:700;margin-top:34px">Akses layanan</div>
+      <div class="tx" style="font-size:25px;line-height:38px;color:var(--text2);margin-top:14px">Kontrol dan latihan menuntut perjalanan berulang ke pusat rehabilitasi.</div>
+    </div>
+    <div class="card" style="padding:50px 48px;height:380px">
+      <div class="ico" style="color:var(--violet)">SVG:people</div>
+      <div class="tx" style="font-size:40px;line-height:50px;font-weight:700;margin-top:34px">Kebutuhan berbeda</div>
+      <div class="tx" style="font-size:25px;line-height:38px;color:var(--text2);margin-top:14px">Kondisi tungkai, kekuatan otot, dan tujuan rehabilitasi tiap orang tidak sama.</div>
+    </div>
+  </div>
+  <div class="abs" style="left:110px;right:110px;top:840px;height:118px;border-radius:30px;background:var(--grad);box-shadow:0 18px 40px -18px rgba(43,108,222,.7);display:flex;align-items:center;padding:0 52px;gap:26px">
+    <div style="width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;color:#fff">SVG:check</div>
+    <div class="tx" style="font-size:31px;line-height:40px;color:#fff;font-weight:600">Dibutuhkan teknologi asistif yang menyesuaikan penggunanya — dan terhubung dengan rehabilitasi.</div>
+  </div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">03</span></div>
+</section>
+
+<!-- =============================================================== 4. SOLUSI -->
+<section class="slide" id="s04" data-transition="fade" data-notes="(±25 detik)
+Dari kebutuhan tersebut kami mengembangkan ASTA, lengan bionik modular non-invasif.
+ASTA dibangun di atas empat fokus: sistem modular yang dapat disesuaikan, kontrol berbasis intent atau niat gerak pengguna, umpan balik sensorik, dan pemantauan aktivitas rehabilitasi.">
+  <div class="abs photo" style="left:110px;top:92px;width:700px;height:880px">
+    <img src="../../assets/foto/telapak.webp" style="object-position:62% 50%" alt="">
+  </div>
+  <div class="abs" style="left:900px;top:92px;right:110px">
+    <div class="eyebrow tx">Solusi</div>
+    <div class="h1 tx">Inilah <em>ASTA.</em></div>
+    <div class="lead tx">Lengan bionik modular non-invasif untuk mendukung aktivitas fungsional dan proses rehabilitasi.</div>
+  </div>
+  <div class="abs" style="left:900px;right:110px;top:470px;display:grid;grid-template-columns:1fr 1fr;gap:40px">
+    <div class="card-s" style="padding:34px 36px;height:230px">
+      <div style="display:flex;gap:20px;align-items:center"><div class="ico">SVG:cube</div><div class="tx" style="font-size:22px;font-weight:800;color:var(--blue);letter-spacing:.2em">FOKUS 01</div></div>
+      <div class="tx" style="font-size:31px;line-height:40px;font-weight:700;margin-top:22px">Sistem modular yang dapat disesuaikan</div>
+    </div>
+    <div class="card-s" style="padding:34px 36px;height:230px">
+      <div style="display:flex;gap:20px;align-items:center"><div class="ico" style="color:var(--violet)">SVG:wave</div><div class="tx" style="font-size:22px;font-weight:800;color:var(--violet);letter-spacing:.2em">FOKUS 02</div></div>
+      <div class="tx" style="font-size:31px;line-height:40px;font-weight:700;margin-top:22px">Kontrol berbasis intent (niat gerak)</div>
+    </div>
+    <div class="card-s" style="padding:34px 36px;height:230px">
+      <div style="display:flex;gap:20px;align-items:center"><div class="ico" style="color:var(--teal)">SVG:pulse</div><div class="tx" style="font-size:22px;font-weight:800;color:var(--teal);letter-spacing:.2em">FOKUS 03</div></div>
+      <div class="tx" style="font-size:31px;line-height:40px;font-weight:700;margin-top:22px">Umpan balik sensorik ke pengguna</div>
+    </div>
+    <div class="card-s" style="padding:34px 36px;height:230px">
+      <div style="display:flex;gap:20px;align-items:center"><div class="ico" style="color:var(--orange)">SVG:chart</div><div class="tx" style="font-size:22px;font-weight:800;color:var(--orange);letter-spacing:.2em">FOKUS 04</div></div>
+      <div class="tx" style="font-size:31px;line-height:40px;font-weight:700;margin-top:22px">Pemantauan aktivitas rehabilitasi</div>
+    </div>
+  </div>
+  <div class="foot" style="left:900px"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">04</span></div>
+</section>
+
+<!-- =============================================================== 5. NOVELTY -->
+<section class="slide" id="s05" data-transition="fade" data-notes="(±30 detik)
+Apa yang baru dari ASTA? Kami membandingkan karakteristik umum tiga kategori lengan prostetik.
+Prostesis kosmetik tidak bergerak. Body-powered bergerak lewat tarikan kabel dari bahu. Prostesis mioelektrik sudah memakai sinyal otot, tetapi umumnya tanpa umpan balik sensorik dan tidak modular.
+Kebaruan ASTA ada pada penggabungan empat hal dalam satu sistem: kendali dari niat gerak, umpan balik sensorik, modul cetak 3D yang bisa diganti, dan pemantauan latihan yang terhubung ke rehabilitator.">
+  <div class="eyebrow tx">Novelty · Kebaruan</div>
+  <div class="h1 tx">Empat kemampuan dalam <em>satu sistem.</em></div>
+  <div class="abs" style="left:110px;right:110px;top:330px;height:640px">
+    <!-- kolom ASTA ditinggikan -->
+    <div class="abs card" style="left:1310px;top:-26px;width:390px;height:692px;background:#f3f7fd"></div>
+    <div class="abs" style="left:0;top:0;right:0;display:grid;grid-template-columns:620px repeat(3,230px) 390px;align-items:center;row-gap:0">
+      <div></div>
+      <div class="tx" style="text-align:center;font-size:24px;line-height:32px;font-weight:700;color:var(--text2)">Prostesis kosmetik</div>
+      <div class="tx" style="text-align:center;font-size:24px;line-height:32px;font-weight:700;color:var(--text2)">Body-powered</div>
+      <div class="tx" style="text-align:center;font-size:24px;line-height:32px;font-weight:700;color:var(--text2)">Mioelektrik umum</div>
+      <div class="tx" style="text-align:center;font-size:36px;line-height:44px;font-weight:800;color:var(--blue)">ASTA</div>
+    </div>
+    <div id="matrix" class="abs" style="left:0;right:0;top:110px"></div>
+    <div class="abs" style="left:0;top:596px;display:flex;gap:40px;align-items:center">
+      <span style="display:flex;gap:14px;align-items:center"><i class="dotm full"></i><span class="tx small" style="font-size:21px">penuh</span><i class="dotm half"></i><span class="tx small" style="font-size:21px">sebagian</span><i class="dotm none"></i><span class="tx small" style="font-size:21px">tidak ada</span></span>
+      <span class="tx small" style="font-size:21px">Perbandingan kualitatif karakteristik umum tiap kategori.</span>
+    </div>
+  </div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">05</span></div>
+</section>
+
+<!-- =============================================================== 6. BLUEPRINT (gelap) -->
+<section class="slide" id="s06" data-transition="fade" style="background:radial-gradient(900px 700px at 0% 0%,rgba(43,108,222,.35),transparent 70%),radial-gradient(800px 600px at 100% 100%,rgba(34,195,230,.18),transparent 70%),linear-gradient(160deg,#071126,#0c2150 60%,#12397a)"
+  data-notes="(±25 detik)
+Ini rancangan ASTA yang kami gambar dengan LibreCAD. ASTA terdiri dari enam modul utama: jari, telapak, pergelangan, lengan bawah, socket, dan sendi siku.
+Setiap modul dapat dilepas dan dicetak ulang. Jadi bila satu bagian rusak atau perlu disesuaikan, cukup modul itu yang diganti, bukan seluruh alat.">
+  <div class="abs" style="left:110px;top:92px;width:560px">
+    <div class="eyebrow tx" style="color:#7fd8f2">Rancangan · LibreCAD</div>
+    <div class="h1 tx" style="color:#fff">Enam modul, dapat dilepas &amp; dicetak ulang.</div>
+    <div style="margin-top:44px;display:grid;gap:22px">
+      <div class="tx" style="font-size:25px;line-height:36px;color:#c9d8f3">① Jari &nbsp; ② Telapak &nbsp; ③ Pergelangan</div>
+      <div class="tx" style="font-size:25px;line-height:36px;color:#c9d8f3">④ Lengan bawah &nbsp; ⑤ Socket &nbsp; ⑥ Sendi siku</div>
+    </div>
+    <div style="margin-top:44px;display:grid;gap:18px">
+      <div style="display:flex;gap:16px;align-items:center"><span style="width:12px;height:12px;border-radius:50%;background:#22c3e6"></span><span class="tx" style="font-size:25px;line-height:34px;color:#fff">Socket disesuaikan dengan tungkai pengguna</span></div>
+      <div style="display:flex;gap:16px;align-items:center"><span style="width:12px;height:12px;border-radius:50%;background:#22c3e6"></span><span class="tx" style="font-size:25px;line-height:34px;color:#fff">Cetak 3D PETG / PLA</span></div>
+      <div style="display:flex;gap:16px;align-items:center"><span style="width:12px;height:12px;border-radius:50%;background:#22c3e6"></span><span class="tx" style="font-size:25px;line-height:34px;color:#fff">Modul rusak diganti, bukan seluruh alat</span></div>
+    </div>
+  </div>
+  <div class="abs" style="left:740px;top:70px;width:1090px;height:830px;border-radius:30px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.45),0 0 0 1px rgba(127,216,242,.18)">
+    <img src="out/blueprint/asta-blueprint-urai.png" style="width:100%;height:100%;object-fit:cover" alt="">
+  </div>
+  <div class="abs" style="left:110px;top:780px;width:560px;height:190px;border-radius:24px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 0 1px rgba(127,216,242,.18)">
+    <img src="out/blueprint/asta-blueprint-rakitan.png" style="width:100%;height:100%;object-fit:cover;object-position:0 30%" alt="">
+  </div>
+  <div class="foot"><span class="l tx" style="color:#7f93b8">ASTA · HRIE 2026</span><span class="n tx" style="color:#7f93b8">06</span></div>
+</section>
+
+<!-- =============================================================== 7. ARSITEKTUR -->
+<section class="slide" id="s07" data-transition="fade" data-notes="(±30 detik)
+Secara sistem, ASTA mengintegrasikan lima bagian: sensor, kontrol, mekanik, umpan balik sensorik, dan aplikasi.
+Sinyal otot pengguna dibaca empat kanal sEMG, diolah unit kendali menjadi pola cengkeram, lalu menggerakkan jari.
+Saat jari menyentuh objek, sensor kontak mengirim informasi ke unit kendali, dan bantalan haptik memberi getaran kepada pengguna.
+Data aktivitas dikirim lewat Bluetooth ke aplikasi pengguna dan dasbor rehabilitator.">
+  <div class="eyebrow tx">Arsitektur sistem</div>
+  <div class="h1 tx">Lima sistem yang <em>saling terhubung.</em></div>
+  <svg class="abs" style="left:0;top:0" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <defs>
+      <marker id="ah" markerUnits="userSpaceOnUse" markerWidth="22" markerHeight="22" refX="16" refY="11" orient="auto"><path d="M0,3 L18,11 L0,19 z" fill="#2b6cde"/></marker>
+      <marker id="at" markerUnits="userSpaceOnUse" markerWidth="22" markerHeight="22" refX="16" refY="11" orient="auto"><path d="M0,3 L18,11 L0,19 z" fill="#10a5a5"/></marker>
+      <marker id="ao" markerUnits="userSpaceOnUse" markerWidth="22" markerHeight="22" refX="16" refY="11" orient="auto"><path d="M0,3 L18,11 L0,19 z" fill="#f0a020"/></marker>
+    </defs>
+    <g stroke-width="5" fill="none" stroke-linecap="round">
+      <path d="M430 530 H 520" stroke="#2b6cde" marker-end="url(#ah)"/>
+      <path d="M840 530 H 930" stroke="#2b6cde" marker-end="url(#ah)"/>
+      <path d="M1250 530 H 1340" stroke="#2b6cde" marker-end="url(#ah)"/>
+      <path d="M1500 600 V 700" stroke="#10a5a5" marker-end="url(#at)" stroke-dasharray="2 12"/>
+      <path d="M1340 780 H 1250" stroke="#10a5a5" marker-end="url(#at)"/>
+      <path d="M1090 710 V 610" stroke="#10a5a5" marker-end="url(#at)"/>
+      <path d="M930 780 H 840" stroke="#10a5a5" marker-end="url(#at)"/>
+      <path d="M520 780 H 300 V 610" stroke="#10a5a5" marker-end="url(#at)"/>
+      <path d="M1090 850 V 935 H 1170" stroke="#f0a020" marker-end="url(#ao)"/>
+      <path d="M1480 935 H 1550" stroke="#f0a020" marker-end="url(#ao)"/>
+    </g>
+  </svg>
+  <div id="arch"></div>
+  <div class="abs" style="left:110px;top:900px;display:flex;gap:40px">
+    <span class="tx small" style="font-size:21px;color:var(--blue);font-weight:600">━ jalur perintah gerak</span>
+    <span class="tx small" style="font-size:21px;color:var(--teal);font-weight:600">━ jalur umpan balik</span>
+    <span class="tx small" style="font-size:21px;color:var(--orange);font-weight:600">━ jalur data</span>
+  </div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">07</span></div>
+</section>
+
+<!-- =============================================================== 8. CARA KERJA + VIDEO -->
+<section class="slide" id="s08" data-transition="fade" data-notes="(±40 detik — putar video di kanan)
+Berikut cara kerja ASTA dalam enam langkah.
+Satu, pengguna memakai socket modular yang disesuaikan dengan tungkainya.
+Dua, niat gerak pengguna dibaca dan diproses menjadi perintah gerak.
+Tiga, ketika ASTA menyentuh objek, sensor mendeteksi kontak.
+Empat, informasi kontak diteruskan menjadi umpan balik getar kepada pengguna.
+Lima, saat latihan, ASTA menghitung repetisi gerakan secara otomatis.
+Enam, data aktivitas dapat dipantau di aplikasi pengguna dan dasbor rehabilitator.
+Video di samping adalah purwarupa ASTA saat menggenggam dan membuka tangan.">
+  <div class="eyebrow tx">Cara kerja</div>
+  <div class="h1 tx">Enam langkah, <em>dari socket sampai dasbor.</em></div>
+  <div id="steps" class="abs" style="left:110px;top:320px;width:820px"></div>
+  <div class="vid" data-src="out/assets/demo-asta.mp4" data-poster="out/assets/demo-asta-poster.jpg" style="left:990px;top:330px;width:820px;height:461px">
+    <img src="out/assets/demo-asta-poster.jpg" alt=""><span class="play"></span>
+  </div>
+  <div class="abs" style="left:990px;top:820px;width:820px;display:flex;gap:18px;flex-wrap:wrap">
+    <span class="chip tx">Menggenggam</span><span class="chip tx">Mengangkat</span><span class="chip tx">Buka–tutup</span>
+  </div>
+  <div class="abs tx small" style="left:990px;top:900px">Video purwarupa ASTA · rekaman tim</div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">08</span></div>
+</section>
+
+<!-- =============================================================== 9. MILESTONE -->
+<section class="slide" id="s09" data-transition="fade" data-notes="(±30 detik)
+ASTA dikembangkan dengan pendekatan User-Centered Design dan Agile Development.
+Kami mulai dari identifikasi kebutuhan melalui konsultasi dengan penyandang amputasi, fisioterapis, serta prostetis dan ortotis.
+Kebutuhan itu diterjemahkan ke dalam desain, dikembangkan menjadi purwarupa, lalu diuji dan dievaluasi. Hasil evaluasi kembali menjadi masukan untuk iterasi berikutnya.">
+  <div class="eyebrow tx">Milestone · Tahapan pengembangan</div>
+  <div class="h1 tx">User-Centered Design <em>+ Agile Development.</em></div>
+  <div class="abs inset" style="left:110px;right:110px;top:470px;height:16px;border-radius:16px"></div>
+  <div class="abs" style="left:110px;top:474px;width:1370px;height:8px;border-radius:8px;background:var(--grad)"></div>
+  <div id="miles" class="abs" style="left:110px;right:110px;top:410px"></div>
+  <div class="abs card-s" style="left:110px;right:110px;top:850px;height:110px;display:flex;align-items:center;gap:26px;padding:0 44px">
+    <div class="ico" style="width:64px;height:64px;border-radius:20px;color:var(--teal)">SVG:loop</div>
+    <div class="tx" style="font-size:27px;line-height:36px;color:var(--text2)"><b style="color:var(--text)">Konsultasi kebutuhan</b> dengan penyandang amputasi, fisioterapis, serta prostetis &amp; ortotis — hasil evaluasi kembali menjadi masukan iterasi berikutnya.</div>
+  </div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">09</span></div>
+</section>
+
+<!-- =============================================================== 10. USABILITY -->
+<section class="slide" id="s10" data-transition="fade" data-notes="(±35 detik)
+Untuk mengevaluasi kebermanfaatannya, ASTA diuji dengan System Usability Scale atau SUS — kuesioner standar sepuluh pernyataan untuk menilai seberapa mudah sebuah produk dipakai. Hasilnya, produk dinyatakan layak untuk dipakai.
+Bagi pengguna, ASTA mendukung aktivitas fungsional sekaligus menunjang rehabilitasi dengan pengalaman yang lebih adaptif.
+Bagi rehabilitator, data aktivitas pengguna menjadi informasi tambahan untuk memantau perkembangan latihan dan mengevaluasi proses rehabilitasi.
+[Bila skor SUS tersedia, sebutkan angkanya di sini.]">
+  <div class="eyebrow tx">Usability · Kebermanfaatan</div>
+  <div class="h1 tx">Diuji dengan System Usability Scale.</div>
+  <div class="abs card" style="left:110px;top:340px;width:620px;height:620px;padding:56px;text-align:center">
+    <div style="position:relative;width:330px;height:330px;margin:0 auto">
+      <div class="inset" style="position:absolute;inset:0;border-radius:50%"></div>
+      <svg width="330" height="330" viewBox="0 0 330 330" style="position:absolute;inset:0">
+        <defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b6cde"/><stop offset="1" stop-color="#22c3e6"/></linearGradient></defs>
+        <circle cx="165" cy="165" r="135" fill="none" stroke="url(#gr)" stroke-width="26" stroke-linecap="round" stroke-dasharray="848" stroke-dashoffset="0" transform="rotate(-90 165 165)"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:grid;place-items:center;color:var(--green)"><span style="width:130px;height:130px;display:block">SVG:checkbig</span></div>
+    </div>
+    <div class="tx" style="font-size:52px;line-height:62px;font-weight:800;margin-top:40px;color:var(--text)">Layak dipakai</div>
+    <div class="tx" style="font-size:24px;line-height:34px;color:var(--text3);margin-top:10px">Hasil uji System Usability Scale (SUS)</div>
+  </div>
+  <div class="abs" style="left:800px;right:110px;top:340px;display:grid;gap:40px">
+    <div class="card-s" style="padding:40px 44px;display:flex;gap:30px;height:290px">
+      <div class="ico">SVG:user</div>
+      <div><div class="tx" style="font-size:36px;line-height:46px;font-weight:700">Bagi pengguna</div>
+      <div class="tx" style="font-size:26px;line-height:39px;color:var(--text2);margin-top:12px">Mendukung aktivitas fungsional sekaligus menunjang rehabilitasi. Sistem yang disesuaikan dan merespons input pengguna memberi pengalaman lebih adaptif.</div></div>
+    </div>
+    <div class="card-s" style="padding:40px 44px;display:flex;gap:30px;height:290px">
+      <div class="ico" style="color:var(--teal)">SVG:steth</div>
+      <div><div class="tx" style="font-size:36px;line-height:46px;font-weight:700">Bagi rehabilitator</div>
+      <div class="tx" style="font-size:26px;line-height:39px;color:var(--text2);margin-top:12px">Data aktivitas pengguna menjadi informasi tambahan untuk memantau perkembangan latihan dan mengevaluasi proses rehabilitasi.</div></div>
+    </div>
+  </div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">10</span></div>
+</section>
+
+<!-- =============================================================== 11. APLIKASI -->
+<section class="slide" id="s11" data-transition="fade" data-notes="(±20 detik)
+Lengan ASTA terhubung dengan aplikasi. Pengguna mendapat latihan terpandu dengan hitungan repetisi otomatis, sedangkan rehabilitator memantau kepatuhan dan perkembangan latihan dari dasbor klinis.
+Aplikasinya dapat dicoba langsung di asta-id.web.app. Data yang tampil di sini adalah data demo.">
+  <div class="eyebrow tx">Aplikasi &amp; dasbor</div>
+  <div class="h1 tx">Latihan di rumah, <em>terpantau dari klinik.</em></div>
+  <div class="abs browser" style="left:110px;top:300px;width:1050px">
+    <div class="bar"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="url tx">asta-id.web.app · Dasbor Klinis</span></div>
+    <img src="out/assets/app-klinis.jpg" style="height:600px;object-fit:cover;object-position:top" alt="">
+  </div>
+  <div class="abs browser" style="left:1010px;top:470px;width:800px">
+    <div class="bar"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="url tx">Sesi Latihan · hitung repetisi</span></div>
+    <img src="out/assets/app-sesi.jpg" style="height:440px;object-fit:cover;object-position:top" alt="">
+  </div>
+  <div class="abs" style="left:110px;top:1000px;display:flex;gap:40px">
+    <span class="tx small" style="font-size:21px"><b style="color:var(--blue)">Pengguna</b> · latihan terpandu &amp; hitung repetisi</span>
+    <span class="tx small" style="font-size:21px"><b style="color:var(--teal)">Rehabilitator</b> · kepatuhan &amp; perkembangan · data demo</span>
+  </div>
+</section>
+
+<!-- =============================================================== 12. HILIRISASI -->
+<section class="slide" id="s12" data-transition="fade" data-notes="(±35 detik)
+ASTA kami rancang agar dapat dikembangkan lebih luas bersama lima pihak.
+Akademisi untuk riset lanjutan, klinik dan rumah sakit rehabilitasi untuk uji penggunaan, komunitas penyandang amputasi sebagai pengguna dan pemberi masukan, industri atau UKM cetak 3D untuk produksi lokal, serta pemerintah untuk perizinan dan program alat bantu.
+Karena modular dan tercetak 3D, ASTA dapat diproduksi dan diperbaiki secara lokal, socket disesuaikan oleh prostetis setempat, dan pemantauannya berjalan jarak jauh lewat aplikasi.">
+  <div class="eyebrow tx">Hilirisasi · Potensi pengembangan</div>
+  <div class="h1 tx">Tumbuh bersama <em>ekosistem rehabilitasi.</em></div>
+  <div id="eco" class="abs" style="left:110px;top:300px;width:900px;height:720px"></div>
+  <div class="abs" style="left:1080px;right:110px;top:330px;display:grid;gap:30px">
+    <div class="tx" style="font-size:24px;letter-spacing:.24em;font-weight:700;color:var(--text3)">MODEL PENYEBARAN</div>
+    <div class="card-s" style="padding:30px 36px;display:flex;gap:26px;align-items:center;height:170px">
+      <div class="ico">SVG:cube</div>
+      <div><div class="tx" style="font-size:30px;line-height:40px;font-weight:700">Produksi &amp; perbaikan lokal</div><div class="tx" style="font-size:23px;line-height:33px;color:var(--text2)">Modul cetak 3D dibuat dan diganti di daerah.</div></div>
+    </div>
+    <div class="card-s" style="padding:30px 36px;display:flex;gap:26px;align-items:center;height:170px">
+      <div class="ico" style="color:var(--teal)">SVG:tool</div>
+      <div><div class="tx" style="font-size:30px;line-height:40px;font-weight:700">Socket oleh prostetis setempat</div><div class="tx" style="font-size:23px;line-height:33px;color:var(--text2)">Penyesuaian mengikuti tungkai tiap pengguna.</div></div>
+    </div>
+    <div class="card-s" style="padding:30px 36px;display:flex;gap:26px;align-items:center;height:170px">
+      <div class="ico" style="color:var(--orange)">SVG:phone</div>
+      <div><div class="tx" style="font-size:30px;line-height:40px;font-weight:700">Telerehabilitasi</div><div class="tx" style="font-size:23px;line-height:33px;color:var(--text2)">Latihan di rumah terpantau layanan rehabilitasi.</div></div>
+    </div>
+  </div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">12</span></div>
+</section>
+
+<!-- =============================================================== 13. ROADMAP -->
+<section class="slide" id="s13" data-transition="fade" data-notes="(±20 detik)
+Tahap purwarupa dan uji kegunaan sudah kami selesaikan. Berikutnya kami menyempurnakan socket dan sensor serta menguji fungsi bersama lebih banyak pengguna dan fisioterapis. Jangka menengah, uji penggunaan terstruktur bersama klinik rehabilitasi. Jangka panjang, pengurusan izin edar alat kesehatan dan produksi lokal.">
+  <div class="eyebrow tx">Rencana pengembangan lanjutan</div>
+  <div class="h1 tx">Dari purwarupa <em>menuju pengguna.</em></div>
+  <div id="road" class="abs" style="left:110px;right:110px;top:360px"></div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">13</span></div>
+</section>
+
+<!-- =============================================================== 14. TIM -->
+<section class="slide" id="s14" data-transition="fade" data-notes="(±10 detik)
+ASTA dikembangkan oleh enam pelajar SMA Negeri 1 Surakarta dengan peran riset, perangkat lunak, TI, dan Internet of Things.">
+  <div class="eyebrow tx">Tim</div>
+  <div class="h1 tx">Enam pelajar, <em>satu tujuan.</em></div>
+  <div class="lead tx">SMA Negeri 1 Surakarta</div>
+  <div id="team" class="abs" style="left:110px;right:110px;top:450px;display:grid;grid-template-columns:repeat(6,1fr);gap:34px"></div>
+  <div class="foot"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">14</span></div>
+</section>
+
+<!-- =============================================================== 15. PENUTUP -->
+<section class="slide" id="s15" data-transition="fade" data-notes="(±15 detik)
+Karena bagi kita menggenggam, mengangkat, dan menjangkau mungkin terlihat sederhana. Namun bagi mereka yang kehilangan kemampuan tersebut, setiap gerakan memiliki arti.
+ASTA hadir bukan sekadar menggantikan gerakan, tetapi membantu penggunanya kembali berinteraksi dengan dunia di sekitarnya. Move with Purpose. Terima kasih.">
+  <div class="abs photo" style="left:0;top:0;width:820px;height:1080px;border-radius:0 60px 60px 0">
+    <img src="../../assets/foto/genggam-dekat.webp" style="object-position:45% 50%" alt="">
+  </div>
+  <div class="abs" style="left:940px;top:120px;right:110px">
+    <img src="../asta-video/logo.png" style="height:130px;display:block" alt="">
+    <div class="tx" style="font-size:88px;line-height:100px;font-weight:800;margin-top:60px;letter-spacing:-.02em">Move with <em style="font-style:normal;color:var(--blue)">Purpose.</em></div>
+    <div class="tx" style="font-size:31px;line-height:46px;color:var(--text2);margin-top:30px">ASTA hadir bukan sekadar menggantikan gerakan, tetapi membantu penggunanya kembali berinteraksi dengan dunia di sekitarnya.</div>
+  </div>
+  <div class="abs card" style="left:940px;top:700px;width:870px;height:250px;display:flex;align-items:center;gap:44px;padding:0 44px">
+    <div style="width:180px;height:180px;border-radius:22px;background:#fff;padding:12px;box-shadow:var(--nm-in)"><img src="out/assets/qr-web.png" style="width:100%;height:100%;display:block" alt=""></div>
+    <div><div class="tx" style="font-size:54px;line-height:64px;font-weight:800">Terima kasih</div>
+    <div class="tx" style="font-size:28px;line-height:40px;color:var(--blue);font-weight:600;margin-top:8px">asta-id.web.app</div>
+    <div class="tx small" style="margin-top:4px">Video profil &amp; demo aplikasi</div></div>
+  </div>
+</section>
+
+<!-- =============================================================== LAMPIRAN -->
+<section class="slide" id="s16" data-transition="fade" data-notes="LAMPIRAN — ditampilkan hanya bila ditanya juri.
+
+Persiapan tanya jawab (3 menit):
+• Apa bedanya dengan prostesis mioelektrik komersial? — ASTA menggabungkan umpan balik sensorik, modul cetak 3D yang dapat diganti, dan pemantauan latihan yang terhubung ke rehabilitator.
+• Apakah sudah diuji ke pasien? — Sudah diuji kegunaannya dengan System Usability Scale dan dinyatakan layak dipakai. Ini uji kegunaan purwarupa, bukan uji klinis; uji bersama klinik rehabilitasi adalah tahap berikutnya.
+• Berapa biaya produksinya? — [isi dengan rincian biaya bahan tim].
+• Bagaimana bila modul rusak? — Modul dicetak ulang dan diganti tanpa mengganti seluruh alat.
+• Bagaimana data pengguna dijaga? — Data hanya dibagikan kepada rehabilitator pengguna; pada demo, data tersimpan lokal di peramban.
+• Siapa calon mitra? — Klinik/RS rehabilitasi, fisioterapis dan prostetis-ortotis, komunitas penyandang amputasi, UKM cetak 3D, perguruan tinggi, dan pemerintah.">
+  <div class="eyebrow tx">Lampiran</div>
+  <div class="h1 tx">Spesifikasi purwarupa.</div>
+  <div id="spec" class="abs card" style="left:110px;top:330px;width:1000px;padding:24px 56px"></div>
+  <div class="abs photo" style="left:1190px;top:330px;width:620px;height:640px">
+    <img src="../../assets/foto/siku-socket.webp" alt="">
+  </div>
+  <div class="foot" style="right:840px"><span class="l tx">ASTA · HRIE 2026</span><span class="n tx">16</span></div>
+</section>
+
+<script>
+/* ---------- ikon garis sederhana ---------- */
+var P = {
+  wave:'<path d="M2 12h3l2-6 3 12 3-9 2 5 2-2h5"/>',
+  pulse:'<path d="M12 21s-7-4.4-9-9.1C1.6 8.5 3.6 5 7 5c2 0 3.3 1.1 5 3 1.7-1.9 3-3 5-3 3.4 0 5.4 3.5 4 6.9C19 16.6 12 21 12 21z"/>',
+  grip:'<path d="M7 11V6a1.5 1.5 0 013 0v4m0-5a1.5 1.5 0 013 0v5m0-4a1.5 1.5 0 013 0v5m0-2a1.5 1.5 0 013 0v4c0 4-3 7-7 7h-1c-3 0-5-2-6-4l-2-4a1.5 1.5 0 012.6-1.5L7 14"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.6-.6-3-1.6M12 6.5v11"/>',
+  road:'<path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/>',
+  people:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2c2.8.2 5 2.6 5 5.8"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  checkbig:'<path d="M4 12.5l5 5L20 6.5"/>',
+  cube:'<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 12l8-4.6M12 12v9.2M12 12L4 7.4"/>',
+  chart:'<path d="M4 20V10m6 10V4m6 16v-7m5 7H3"/>',
+  loop:'<path d="M20 12a8 8 0 01-13.7 5.7M4 12A8 8 0 0117.7 6.3"/><path d="M18 2.5v4h-4M6 21.5v-4h4"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
+  steth:'<path d="M6 3v6a5 5 0 0010 0V3"/><path d="M11 14v2a4 4 0 008 0v-2"/><circle cx="19" cy="12" r="2"/>',
+  tool:'<path d="M14.7 6.3a4 4 0 00-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 005.4-5.4l-2.5 2.5-2.8-.7-.7-2.8z"/>',
+  phone:'<rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/>',
+  cpu:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/>',
+  hand:'<path d="M8 13V5a1.5 1.5 0 013 0v6m0-7a1.5 1.5 0 013 0v7m0-5a1.5 1.5 0 013 0v7m0-3a1.5 1.5 0 013 0v5c0 4-3 7-7 7h-1c-3 0-5-2-6-4l-2.3-4.2A1.5 1.5 0 016.3 14L8 16"/>',
+  touch:'<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" opacity=".55"/><circle cx="12" cy="12" r="10.5" opacity=".25"/>',
+  monitor:'<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  school:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/>',
+  hospital:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 7v6M9 10h6M9 21v-4h6v4"/>',
+  factory:'<path d="M3 21V10l6 4V10l6 4V6h6v15z"/>',
+  gov:'<path d="M3 21h18M5 18V10M9.5 18V10M14.5 18V10M19 18V10M2.5 8L12 3l9.5 5z"/>',
+  bt:'<path d="M7 7l10 10-5 4V3l5 4L7 17"/>'
+};
+function svgIcon(name, color){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color||'currentColor') + '" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:100%;height:100%">' + P[name] + '</svg>';
+}
+function icoWrap(name){ return '<span style="display:block;width:40px;height:40px">' + svgIcon(name) + '</span>'; }
+function $(id){ return document.getElementById(id); }
+
+/* ---------- matriks kebaruan ---------- */
+var ROWS = [
+  ['Gerak jari aktif', '○','●','●','●'],
+  ['Kendali dari niat / sinyal otot', '○','○','●','●'],
+  ['Umpan balik sensorik ke pengguna', '○','◐','○','●'],
+  ['Modular & dapat dicetak ulang', '○','○','○','●'],
+  ['Pemantauan latihan terhubung rehabilitator', '○','○','◐','●']
+];
+$('matrix').innerHTML = ROWS.map(function(r,i){
+  return '<div style="display:grid;grid-template-columns:620px repeat(3,230px) 390px;align-items:center;height:94px;border-top:' + (i?'2px solid #d6e0ee':'0') + '">' +
+    '<div class="tx" style="font-size:29px;line-height:38px;font-weight:600">' + r[0] + '</div>' +
+    r.slice(1).map(function(c,j){
+      var cls = c==='●' ? 'full' : c==='◐' ? 'half' : 'none';
+      return '<div style="display:grid;place-items:center"><i class="dotm big ' + cls + (j===3?' asta':'') + '"></i></div>';
+    }).join('') + '</div>';
+}).join('');
+
+/* ---------- arsitektur ---------- */
+var NODES = [
+  // x, y, w, h, ikon, warna, judul, sub
+  [110,450,320,160,'user','var(--blue)','Pengguna','niat gerak'],
+  [520,450,320,160,'wave','var(--violet)','Sensor','4 kanal sEMG'],
+  [930,450,320,160,'cpu','var(--blue)','Kontrol','pola cengkeram'],
+  [1340,450,470,160,'hand','var(--blue)','Mekanik','jari 14 ruas · cetak 3D'],
+  [1340,710,470,140,'touch','var(--teal)','Sensor kontak','ujung jari'],
+  [930,710,320,140,'cpu','var(--teal)','Kontrol','olah kontak'],
+  [520,710,320,140,'pulse','var(--teal)','Umpan balik','haptik 4 bantalan'],
+  [1180,880,300,110,'bt','var(--orange)','Aplikasi','via Bluetooth LE'],
+  [1560,880,250,110,'monitor','var(--orange)','Dasbor','rehabilitator']
+];
+$('arch').innerHTML = NODES.map(function(n){
+  var small = n[3] < 150;
+  return '<div class="abs card-s" style="left:' + n[0] + 'px;top:' + n[1] + 'px;width:' + n[2] + 'px;height:' + n[3] + 'px;display:flex;align-items:center;gap:' + (n[2]<200?12:22) + 'px;padding:0 ' + (n[2]<200?16:26) + 'px">' +
+    (n[2] < 240 ? '' : '<div class="ico" style="width:' + (small?64:78) + 'px;height:' + (small?64:78) + 'px;flex:0 0 auto;color:' + n[5] + '"><span style="display:block;width:36px;height:36px">' + svgIcon(n[4]) + '</span></div>') +
+    '<div><div class="tx" style="font-size:' + (n[2]<200?25:29) + 'px;line-height:36px;font-weight:700">' + n[6] + '</div>' +
+    '<div class="tx" style="font-size:' + (n[2]<200?18:21) + 'px;line-height:28px;color:var(--text3)">' + n[7] + '</div></div></div>';
+}).join('');
+
+/* ---------- langkah cara kerja ---------- */
+var STEPS = [
+  ['Socket modular','disesuaikan dengan tungkai pengguna'],
+  ['Kontrol berbasis intent','niat gerak diproses menjadi perintah'],
+  ['Deteksi kontak','sensor mengenali sentuhan objek'],
+  ['Umpan balik sensorik','getaran haptik ke pengguna'],
+  ['Hitung repetisi','otomatis saat latihan'],
+  ['Pantau di aplikasi','pengguna & dasbor rehabilitator']
+];
+$('steps').innerHTML = STEPS.map(function(s,i){
+  return '<div style="display:flex;align-items:center;gap:28px;height:108px">' +
+    '<div class="tx" style="width:70px;height:70px;border-radius:22px;background:var(--grad);color:#fff;font-size:30px;line-height:70px;text-align:center;font-weight:800;box-shadow:0 12px 24px -12px rgba(43,108,222,.9);flex:0 0 auto">' + (i+1) + '</div>' +
+    '<div><div class="tx" style="font-size:31px;line-height:40px;font-weight:700">' + s[0] + '</div>' +
+    '<div class="tx" style="font-size:23px;line-height:32px;color:var(--text3)">' + s[1] + '</div></div></div>';
+}).join('');
+
+/* ---------- milestone ---------- */
+var MILES = [
+  ['Identifikasi kebutuhan','konsultasi 3 pemangku kepentingan'],
+  ['Desain','rancangan 3D & blueprint'],
+  ['Pengembangan','cetak 3D, elektronika, aplikasi'],
+  ['Pengujian','uji fungsi & System Usability Scale'],
+  ['Evaluasi & iterasi','berlanjut ke tahap berikutnya']
+];
+$('miles').innerHTML = '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:30px">' + MILES.map(function(m,i){
+  var last = i === 4;
+  return '<div style="text-align:center">' +
+    '<div style="width:136px;height:136px;margin:0 auto;border-radius:50%;background:var(--bg);box-shadow:var(--nm-s);display:grid;place-items:center">' +
+      '<div class="tx" style="width:96px;height:96px;border-radius:50%;background:' + (last?'var(--bg)':'var(--grad)') + ';box-shadow:' + (last?'var(--nm-in)':'none') + ';color:' + (last?'var(--blue)':'#fff') + ';font-size:40px;line-height:96px;font-weight:800">' + (i+1) + '</div></div>' +
+    '<div class="tx" style="font-size:31px;line-height:40px;font-weight:700;margin-top:34px">' + m[0] + '</div>' +
+    '<div class="tx" style="font-size:23px;line-height:33px;color:var(--text3);margin-top:8px">' + m[1] + '</div>' +
+    '<div class="tx" style="display:inline-block;margin-top:18px;padding:6px 20px;border-radius:999px;font-size:19px;line-height:26px;font-weight:700;letter-spacing:.12em;' +
+      (last ? 'background:#fdf0d6;color:#b06f06' : 'background:#d8f3e7;color:#15835a') + '">' + (last ? 'BERLANJUT' : 'SELESAI') + '</div>' +
+  '</div>';
+}).join('') + '</div>';
+
+/* ---------- ekosistem hilirisasi ---------- */
+(function(){
+  var cx = 450, cy = 370, R = 285;
+  var E = [['school','Akademisi','riset lanjutan','var(--blue)'],['hospital','Klinik & RS','uji penggunaan','var(--teal)'],
+           ['people','Komunitas','pengguna & masukan','var(--violet)'],['factory','UKM cetak 3D','produksi lokal','var(--orange)'],
+           ['gov','Pemerintah','izin & program','var(--green)']];
+  var h = '<svg class="abs" style="left:0;top:0" width="900" height="720">';
+  E.forEach(function(e,i){
+    var a = -Math.PI/2 + i*2*Math.PI/5, x = cx + R*Math.cos(a), y = cy + R*Math.sin(a);
+    h += '<line x1="' + cx + '" y1="' + cy + '" x2="' + x + '" y2="' + y + '" stroke="#b9c8dd" stroke-width="4" stroke-dasharray="3 12" stroke-linecap="round"/>';
+  });
+  h += '</svg>';
+  h += '<div class="abs" style="left:' + (cx-130) + 'px;top:' + (cy-130) + 'px;width:260px;height:260px;border-radius:50%;background:var(--bg);box-shadow:var(--nm);display:grid;place-items:center">' +
+       '<div style="width:196px;height:196px;border-radius:50%;background:var(--grad);display:grid;place-items:center;box-shadow:0 20px 40px -20px rgba(43,108,222,.9)">' +
+       '<div class="tx" style="color:#fff;font-size:48px;line-height:56px;font-weight:800;letter-spacing:.06em">ASTA</div></div></div>';
+  E.forEach(function(e,i){
+    var a = -Math.PI/2 + i*2*Math.PI/5, x = cx + R*Math.cos(a), y = cy + R*Math.sin(a);
+    h += '<div class="abs card-s" style="left:' + (x-120) + 'px;top:' + (y-70) + 'px;width:240px;height:140px;padding:16px 18px;text-align:center">' +
+      '<div style="width:38px;height:38px;margin:0 auto;color:' + e[3] + '">' + svgIcon(e[0]) + '</div>' +
+      '<div class="tx" style="font-size:25px;line-height:32px;font-weight:700;margin-top:8px">' + e[1] + '</div>' +
+      '<div class="tx" style="font-size:19px;line-height:26px;color:var(--text3)">' + e[2] + '</div></div>';
+  });
+  $('eco').innerHTML = h;
+})();
+
+/* ---------- roadmap ---------- */
+var ROAD = [
+  ['SELESAI','Purwarupa & uji kegunaan','Purwarupa enam modul, aplikasi & dasbor, uji System Usability Scale.','#15835a','#d8f3e7'],
+  ['BERIKUTNYA','Penyempurnaan','Socket, sensor kontak, dan uji fungsi bersama lebih banyak pengguna & fisioterapis.','var(--blue)','#d3e4ff'],
+  ['JANGKA MENENGAH','Uji penggunaan terstruktur','Kemitraan klinik rehabilitasi untuk uji penggunaan jangka panjang.','var(--violet)','#e9e3ff'],
+  ['JANGKA PANJANG','Izin edar & produksi lokal','Pengurusan izin alat kesehatan dan jaringan produksi cetak 3D daerah.','#b06f06','#fdf0d6']
+];
+$('road').innerHTML = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:40px">' + ROAD.map(function(r,i){
+  return '<div class="card" style="height:560px;padding:46px 40px;position:relative">' +
+    '<div class="tx" style="display:inline-block;padding:8px 20px;border-radius:999px;background:' + r[4] + ';color:' + r[3] + ';font-size:19px;line-height:26px;font-weight:800;letter-spacing:.14em">' + r[0] + '</div>' +
+    '<div class="tx" style="font-size:96px;line-height:110px;font-weight:800;color:#d3ddeb;margin-top:30px">0' + (i+1) + '</div>' +
+    '<div class="tx" style="font-size:34px;line-height:44px;font-weight:700;margin-top:16px">' + r[1] + '</div>' +
+    '<div class="tx" style="font-size:24px;line-height:36px;color:var(--text2);margin-top:16px">' + r[2] + '</div></div>';
+}).join('') + '</div>';
+
+/* ---------- tim ---------- */
+var TEAM = [['team-leader','Team Leader'],['researcher-a','Researcher'],['researcher-b','Researcher'],
+            ['software-engineer','Software Engineer'],['it-engineer','IT Engineer'],['iot-engineer','IoT Engineer']];
+$('team').innerHTML = TEAM.map(function(t){
+  return '<div class="card-s" style="padding:34px 20px 36px;text-align:center;height:460px">' +
+    '<div style="width:220px;height:220px;margin:0 auto;border-radius:50%;padding:10px;background:var(--bg);box-shadow:var(--nm-in)">' +
+    '<img src="../../assets/tim/' + t[0] + '.webp" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block" alt=""></div>' +
+    '<div class="tx" style="font-size:29px;line-height:38px;font-weight:700;margin-top:40px">' + t[1] + '</div>' +
+    '<div class="tx" style="font-size:20px;line-height:28px;color:var(--text3);margin-top:8px">ASTA</div></div>';
+}).join('');
+
+/* ---------- spesifikasi ---------- */
+var SPEC = [['Jenis','Transradial modular, non-invasif'],['Akuisisi sinyal','4 kanal sEMG permukaan'],
+  ['Derajat kebebasan','5 digit + rotasi pergelangan'],['Ruas berartikulasi','14 ruas'],
+  ['Umpan balik','Haptik getar, 4 bantalan'],['Pola cengkeram','8 pola tersimpan'],
+  ['Material','PETG / PLA cetak 3D'],['Konektivitas','Bluetooth Low Energy']];
+$('spec').innerHTML = SPEC.map(function(s,i){
+  return '<div style="display:flex;justify-content:space-between;align-items:center;height:76px;border-top:' + (i?'2px solid #d6e0ee':'0') + '">' +
+    '<span class="tx" style="font-size:27px;line-height:36px;color:var(--text3)">' + s[0] + '</span>' +
+    '<span class="tx" style="font-size:28px;line-height:36px;font-weight:700;text-align:right">' + s[1] + '</span></div>';
+}).join('');
+
+/* ---------- ganti penanda SVG:nama ---------- */
+document.querySelectorAll('.ico, [style]').forEach(function(el){
+  if (el.children.length === 0 && /^SVG:\w+$/.test(el.textContent.trim())) {
+    var n = el.textContent.trim().slice(4);
+    el.innerHTML = el.classList.contains('ico') ? icoWrap(n) : svgIcon(n);
+  }
+});
+document.querySelectorAll('.ico').forEach(function(el){
+  var t = el.textContent.trim();
+  if (/^SVG:\w+$/.test(t)) el.innerHTML = icoWrap(t.slice(4));
+});
+window.DECK_READY = true;
+</script>
+</body>
+</html>
