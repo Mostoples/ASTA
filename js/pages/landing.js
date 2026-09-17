@@ -2,8 +2,8 @@
    ASTA — Landing page publik
    Halaman terbuka (tanpa autentikasi) yang memperkenalkan ASTA.
    Seluruh gambar di halaman ini adalah SVG yang dibangkitkan
-   js/lib/illustrations.js dan js/lib/decor.js, kecuali render
-   Blender pada bagian Teknologi.
+   js/lib/illustrations.js dan js/lib/decor.js, kecuali foto
+   purwarupa asli (assets/foto/) dan video profil (assets/video/).
 
    Catatan isi: ASTA adalah purwarupa penelitian. Halaman ini
    sengaja hanya memuat spesifikasi teknis yang benar-benar ada
@@ -32,16 +32,63 @@
     { v: '±38 ms', s: 'latensi niat ke gerak' }
   ];
 
+  /* Latar belakang: isi naskah video profil (Scene 9). */
   var MASALAH = [
-    { icon: 'brain', tone: 'violet', h: 'Nyeri phantom jarang tertangani',
-      p: 'Nyeri pada anggota tubuh yang sudah tiada kerap berlanjut bertahun-tahun. ' +
-         'Penanganannya menuntut latihan rutin yang terpandu, bukan obat semata.' },
-    { icon: 'grip', tone: '', h: 'Lengan prostetik sering ditinggalkan',
-      p: 'Alat yang terasa berat, lambat, atau sulit dikendalikan berakhir di lemari. ' +
-         'Tanpa pemantauan, tim klinis tidak tahu kapan pemakaian mulai menurun.' },
-    { icon: 'cloud', tone: 'teal', h: 'Layanan rehabilitasi jauh dari rumah',
-      p: 'Kontrol rutin menuntut perjalanan berulang ke pusat rehabilitasi. ' +
-         'Banyak sesi latihan akhirnya berjalan tanpa pengawasan sama sekali.' }
+    { icon: 'shield', tone: '', h: 'Biaya',
+      p: 'Harga lengan prostetik fungsional masih menjadi hambatan utama bagi banyak ' +
+         'penyandang amputasi untuk memilikinya.' },
+    { icon: 'cloud', tone: 'teal', h: 'Akses layanan',
+      p: 'Kontrol dan latihan rutin menuntut perjalanan berulang ke pusat rehabilitasi ' +
+         'yang belum tentu dekat dari rumah.' },
+    { icon: 'hand', tone: 'violet', h: 'Kebutuhan yang berbeda',
+      p: 'Tungkai sisa, kekuatan otot, dan tujuan rehabilitasi setiap orang tidak sama. ' +
+         'Satu ukuran untuk semua jarang benar-benar pas.' }
+  ];
+
+  /* Empat fokus utama (Scene 10) */
+  var FOKUS = [
+    { icon: 'print', tone: '', h: 'Sistem modular yang dapat disesuaikan',
+      p: 'Socket dan bagian tangan dapat disesuaikan dengan pengguna dan dicetak ulang ' +
+         'bila rusak, tanpa mengganti seluruh alat.' },
+    { icon: 'emg', tone: 'violet', h: 'Kontrol berbasis intent',
+      p: 'Gerak diambil dari niat pengguna yang terbaca lewat sinyal otot permukaan ' +
+         '(sEMG), lalu diterjemahkan menjadi pola cengkeram.' },
+    { icon: 'haptic', tone: 'teal', h: 'Umpan balik sensorik',
+      p: 'Saat jari menyentuh objek, bantalan getar di socket menyampaikan kontak dan ' +
+         'kekuatan genggaman kepada pengguna.' },
+    { icon: 'chart', tone: '', h: 'Pemantauan aktivitas rehabilitasi',
+      p: 'Repetisi dan aktivitas latihan tercatat otomatis, lalu dapat dipantau lewat ' +
+         'aplikasi pengguna dan dasbor rehabilitator.' }
+  ];
+
+  /* Metode pengembangan (Scene 11) */
+  var PEMANGKU = [
+    { icon: 'user', h: 'Penyandang amputasi', p: 'pengalaman memakai alat dalam aktivitas sehari-hari' },
+    { icon: 'stethoscope', h: 'Fisioterapis', p: 'kebutuhan latihan dan proses rehabilitasi' },
+    { icon: 'wrench', h: 'Prostetis & ortotis', p: 'kecocokan socket dan kenyamanan pemakaian' }
+  ];
+  var ITERASI = ['Kebutuhan', 'Desain', 'Pengembangan', 'Pengujian', 'Evaluasi'];
+
+  /* Lima sistem terintegrasi (Scene 12) */
+  var SISTEM = [
+    ['Mekanik', 'Jari 14 ruas, cetak 3D PETG/PLA'],
+    ['Kontrol', 'Pola cengkeram dari niat pengguna'],
+    ['Sensor', '4 kanal sEMG + deteksi kontak'],
+    ['Umpan balik sensorik', 'Haptik getar, 4 bantalan di socket'],
+    ['Pemantauan aplikasi', 'Terhubung lewat Bluetooth LE']
+  ];
+
+  /* Pola cengkeram yang tersimpan di konfigurasi alat */
+  var POLA = ['Terbuka', 'Power grip', 'Pinch', 'Tripod', 'Lateral / kunci', 'Menunjuk', 'Hook', 'Tap / ketuk'];
+
+  /* Foto purwarupa asli, diambil dari rekaman footage tim */
+  var FOTO = [
+    ['genggam-bohlam', 'Menggenggam bohlam'],
+    ['jari-terbuka', 'Jari terbuka penuh'],
+    ['genggam-benda', 'Menjepit benda'],
+    ['siku-socket', 'Sambungan siku'],
+    ['telapak', 'Telapak dan lengan bawah'],
+    ['mekanisme', 'Mekanisme pergelangan']
   ];
 
   var FITUR = [
@@ -66,14 +113,18 @@
   ];
 
   var LANGKAH = [
-    { h: 'Pasang elektroda', p: 'Empat bantalan sEMG ditempel pada titik otot yang ' +
-      'sudah ditandai prostetis. Tanpa operasi, tanpa implan.' },
-    { h: 'Kalibrasi', p: 'Wizard tiga langkah mengukur baseline dan kontraksi maksimum ' +
-      'hari itu, lalu menyetel ambang secara otomatis.' },
-    { h: 'Latihan terpandu', p: 'Aplikasi memandu sesi harian sesuai resep terapis, ' +
-      'menghitung repetisi, dan mencatat nyeri sesudahnya.' },
-    { h: 'Tim klinis memantau', p: 'Hasil sesi langsung terlihat di dasbor terapis, ' +
-      'sehingga program dapat disesuaikan tanpa menunggu kontrol berikutnya.' }
+    { h: 'Socket modular', p: 'ASTA diawali socket modular yang disesuaikan dengan ' +
+      'tungkai dan kebutuhan penggunanya. Tanpa operasi, tanpa implan.' },
+    { h: 'Kontrol berbasis intent', p: 'Sinyal otot pengguna diproses (envelope, ' +
+      'normalisasi, ambang) menjadi perintah gerak dan pola cengkeram.' },
+    { h: 'Deteksi kontak', p: 'Ketika ASTA bersentuhan dengan objek, sensor mendeteksi ' +
+      'kontak dan mengirimkan informasinya ke sistem.' },
+    { h: 'Umpan balik sensorik', p: 'Informasi kontak diteruskan menjadi getaran haptik, ' +
+      'sehingga pengguna merasakan genggamannya.' },
+    { h: 'Hitung repetisi', p: 'Dalam latihan rehabilitasi, ASTA menghitung repetisi ' +
+      'gerakan secara otomatis.' },
+    { h: 'Pantau di aplikasi', p: 'Data aktivitas dapat dipantau lewat aplikasi pengguna ' +
+      'dan dasbor rehabilitator.' }
   ];
 
   var SPEC = [
@@ -87,18 +138,23 @@
     ['Konektivitas', 'Bluetooth Low Energy']
   ];
 
-  /* Tim: avatar SVG dulu. Nama sengaja ditandai sebagai isian
-     sementara supaya tidak terbaca sebagai identitas sungguhan.
-     Ganti `placeholder: false` beserta nama & perannya bila data
-     asli sudah tersedia. */
+  /* Tim: peran diambil dari perkenalan di video profil. Nama sengaja
+     belum ditulis sampai ejaan resminya dikonfirmasi tim; isi `name`
+     (dan `photo` bila ada izin) untuk menampilkannya. */
   var TIM = [
-    { name: 'Nama anggota 1', role: 'Ketua tim · Riset klinis', seed: 'a1', hijab: false, placeholder: true },
-    { name: 'Nama anggota 2', role: 'Desain mekanik & cetak 3D', seed: 'b2', hijab: true, placeholder: true },
-    { name: 'Nama anggota 3', role: 'Elektronika & sinyal EMG', seed: 'c3', hijab: false, placeholder: true },
-    { name: 'Nama anggota 4', role: 'Perangkat lunak & data', seed: 'd4', hijab: true, placeholder: true }
+    { name: '', role: 'Team Leader', seed: 'a1', hijab: false },
+    { name: '', role: 'Researcher', seed: 'b2', hijab: false },
+    { name: '', role: 'Researcher', seed: 'c3', hijab: false },
+    { name: '', role: 'Software Engineer', seed: 'd4', hijab: false },
+    { name: '', role: 'IT Engineer', seed: 'e5', hijab: false },
+    { name: '', role: 'IoT Engineer', seed: 'f6', hijab: false }
   ];
 
   var FAQ = [
+    ['Bagaimana ASTA diuji?',
+     'Kegunaan ASTA dievaluasi dengan System Usability Scale (SUS), kuesioner standar ' +
+     'untuk menilai seberapa mudah sebuah produk dipakai. Hasilnya menyatakan produk ' +
+     'layak untuk dipakai. Karena masih purwarupa, pengujian ini belum merupakan uji klinis.'],
     ['Apakah ASTA memerlukan operasi?',
      'Tidak. ASTA memakai elektroda sEMG permukaan yang ditempel di kulit lengan bawah. ' +
      'Tidak ada implan, tidak ada prosedur bedah, dan alat dapat dilepas kapan saja.'],
@@ -153,10 +209,11 @@
       '<div class="lp-wrap lp-nav-in">' +
         '<a class="lp-brand" href="#utama"><span class="mark">' + Shell.logo(24) + '</span>ASTA</a>' +
         '<nav class="lp-links" id="links" aria-label="Navigasi halaman">' +
-          '<a href="#masalah">Masalah</a>' +
-          '<a href="#solusi">Solusi</a>' +
+          '<a href="#video">Video</a>' +
+          '<a href="#masalah">Latar</a>' +
+          '<a href="#fokus">Fokus</a>' +
           '<a href="#cara-kerja">Cara kerja</a>' +
-          '<a href="#teknologi">Teknologi</a>' +
+          '<a href="#pengujian">Pengujian</a>' +
           '<a href="#tim">Tim</a>' +
           '<a href="#faq">FAQ</a>' +
         '</nav>' +
@@ -177,17 +234,18 @@
           '<div>' +
             '<span class="lp-badge"><span class="dot"></span>' +
               'Purwarupa penelitian · Lengan bionik modular non-invasif</span>' +
-            '<h1 class="lp-h1">Lengan bionik yang <em>terhubung</em> dengan tim klinis Anda.</h1>' +
-            '<p>ASTA — Adaptive Sensory-feedback Telerehabilitation Arm — menggabungkan ' +
-              'lengan prostetik cetak 3D berkendali sinyal otot dengan platform ' +
-              'telerehabilitasi. Fokusnya dua hal yang paling sering luput: nyeri phantom ' +
-              'dan kepatuhan terapi jangka panjang.</p>' +
+            '<h1 class="lp-h1">Setiap gerakan <em>memiliki arti.</em></h1>' +
+            '<p>ASTA — Adaptive Sensory-feedback Telerehabilitation Arm — adalah lengan ' +
+              'bionik modular non-invasif untuk mendukung aktivitas fungsional dan proses ' +
+              'rehabilitasi penyandang amputasi. Lengan dan aplikasinya dirancang bersama, ' +
+              'sehingga latihan di rumah dapat dipantau oleh rehabilitator.</p>' +
+            '<p class="lp-tagline">Move with Purpose.</p>' +
             '<div class="lp-cta">' +
               '<a class="btn btn-primary btn-lg" href="' + U.esc(masukHref) + '">' +
                 Icon('play', 19) + '<span>' +
                 (session ? 'Buka dasbor' : 'Coba demo aplikasi') + '</span></a>' +
-              '<a class="btn btn-lg" href="#teknologi">' + Icon('grid', 19) +
-                '<span>Lihat model 3D</span></a>' +
+              '<a class="btn btn-lg" href="#video">' + Icon('video', 19) +
+                '<span>Tonton video profil</span></a>' +
             '</div>' +
           '</div>' +
           '<div class="lp-hero-stage">' +
@@ -205,16 +263,75 @@
       '</div>' +
     '</section>' +
 
-    /* ===================== Masalah ===================== */
+    /* ===================== Video profil ===================== */
+    '<section class="lp-section" id="video">' +
+      '<div class="lp-wrap">' +
+        '<div class="lp-center">' +
+          '<span class="lp-eyebrow">Video profil</span>' +
+          '<h2 class="lp-h2">Kenali ASTA dalam kurang dari lima menit.</h2>' +
+          '<p class="lp-lead">Dari latar belakang, metode pengembangan, cara kerja, ' +
+            'sampai hasil pengujian — diceritakan langsung oleh tim.</p>' +
+        '</div>' +
+        '<div class="lp-video lp-reveal">' +
+          '<video controls playsinline preload="none" ' +
+            'poster="assets/video/asta-profil-poster.jpg" width="1280" height="720">' +
+            '<source src="assets/video/asta-profil-720.mp4" type="video/mp4">' +
+            'Peramban Anda tidak dapat memutar video ini.' +
+          '</video>' +
+        '</div>' +
+      '</div>' +
+    '</section>' +
+
+    /* ===================== Latar belakang ===================== */
     '<section class="lp-section lp-alt" id="masalah">' +
       '<div class="lp-wrap">' +
-        '<span class="lp-eyebrow">Masalah</span>' +
-        '<h2 class="lp-h2">Kehilangan tangan tidak berakhir di ruang operasi.</h2>' +
-        '<p class="lp-lead">Tiga hambatan yang berulang kali muncul dalam rehabilitasi ' +
-          'penyandang amputasi ekstremitas atas — dan ketiganya saling memperberat.</p>' +
+        '<span class="lp-eyebrow">Latar belakang</span>' +
+        '<h2 class="lp-h2">Teknologi asistif belum terjangkau oleh semua yang membutuhkannya.</h2>' +
+        '<p class="lp-lead">Keterbatasan akses terhadap teknologi asistif masih menjadi ' +
+          'salah satu tantangan bagi penyandang amputasi di Indonesia. Tiga hambatan ' +
+          'yang paling sering muncul:</p>' +
         '<div class="lp-grid-3" style="margin-top:38px">' +
           MASALAH.map(card).join('') +
         '</div>' +
+        '<p class="lp-callout lp-reveal">' + Icon('check', 20) +
+          '<span>Dibutuhkan teknologi asistif yang <b>dapat menyesuaikan kebutuhan ' +
+          'penggunanya</b>. Dari kebutuhan itulah ASTA dikembangkan.</span></p>' +
+      '</div>' +
+    '</section>' +
+
+    /* ===================== Empat fokus ===================== */
+    '<section class="lp-section" id="fokus">' +
+      '<div class="lp-wrap">' +
+        '<span class="lp-eyebrow">Empat fokus utama</span>' +
+        '<h2 class="lp-h2">Empat hal yang menjadi dasar setiap keputusan desain.</h2>' +
+        '<div class="lp-grid-4" style="margin-top:38px">' +
+          FOKUS.map(function (f, i) {
+            return card(f).replace('<h3>', '<em class="lp-num">0' + (i + 1) + '</em><h3>');
+          }).join('') +
+        '</div>' +
+      '</div>' +
+    '</section>' +
+
+    /* ===================== Metode ===================== */
+    '<section class="lp-section lp-alt" id="metode">' +
+      '<div class="lp-wrap">' +
+        '<span class="lp-eyebrow">Metode pengembangan</span>' +
+        '<h2 class="lp-h2">User-Centered Design dan Agile Development.</h2>' +
+        '<p class="lp-lead">Kebutuhan pengguna diidentifikasi lewat konsultasi dengan tiga ' +
+          'pihak, diterjemahkan ke dalam desain, lalu dikembangkan secara iteratif melalui ' +
+          'pengujian dan evaluasi.</p>' +
+        '<div class="lp-grid-3" style="margin-top:38px">' +
+          PEMANGKU.map(function (m) {
+            return '<article class="lp-card lp-reveal"><span class="lp-ico teal">' +
+              Icon(m.icon, 24) + '</span><h3>' + U.esc(m.h) + '</h3><p>' +
+              U.esc(m.p) + '</p></article>';
+          }).join('') +
+        '</div>' +
+        '<ol class="lp-loop lp-reveal" aria-label="Siklus pengembangan iteratif">' +
+          ITERASI.map(function (t) { return '<li>' + U.esc(t) + '</li>'; }).join('') +
+        '</ol>' +
+        '<p class="lp-loop-note">' + Icon('refresh', 16) +
+          '<span>Hasil evaluasi kembali menjadi masukan kebutuhan pada iterasi berikutnya.</span></p>' +
       '</div>' +
     '</section>' +
 
@@ -222,9 +339,17 @@
     '<section class="lp-section" id="solusi">' +
       '<div class="lp-wrap">' +
         '<span class="lp-eyebrow">Solusi</span>' +
-        '<h2 class="lp-h2">Satu alat, satu aplikasi, satu tim yang melihat hal yang sama.</h2>' +
-        '<p class="lp-lead">Lengan dan platformnya dirancang bersamaan, sehingga setiap ' +
-          'gerakan yang dilakukan di rumah punya jejak yang dapat dibaca di klinik.</p>' +
+        '<h2 class="lp-h2">Lengan bionik modular non-invasif dengan lima sistem terintegrasi.</h2>' +
+        '<p class="lp-lead">Hasil dari proses pengembangan adalah ASTA: mekanik, kontrol, ' +
+          'sensor, umpan balik sensorik, dan pemantauan aktivitas lewat aplikasi bekerja ' +
+          'sebagai satu kesatuan.</p>' +
+        '<div class="lp-systems lp-reveal">' +
+          SISTEM.map(function (x, i) {
+            return '<div><i>' + (i + 1) + '</i><b>' + U.esc(x[0]) + '</b><span>' +
+              U.esc(x[1]) + '</span></div>';
+          }).join('') +
+        '</div>' +
+        '<h3 class="lp-h3">Yang dapat dilakukan lengan dan aplikasinya</h3>' +
         '<div class="lp-grid-3" style="margin-top:38px">' +
           FITUR.map(card).join('') +
         '</div>' +
@@ -235,8 +360,8 @@
     '<section class="lp-section lp-alt" id="cara-kerja">' +
       '<div class="lp-wrap">' +
         '<span class="lp-eyebrow">Cara kerja</span>' +
-        '<h2 class="lp-h2">Dari niat gerak sampai catatan klinis, dalam empat langkah.</h2>' +
-        '<div class="lp-steps" style="margin-top:42px">' +
+        '<h2 class="lp-h2">Dari socket sampai dasbor rehabilitator, dalam enam langkah.</h2>' +
+        '<div class="lp-steps lp-steps-3" style="margin-top:42px">' +
           LANGKAH.map(function (s) {
             return '<div class="lp-step lp-reveal"><h3>' + U.esc(s.h) + '</h3><p>' +
               U.esc(s.p) + '</p></div>';
@@ -255,10 +380,10 @@
         '<div class="lp-tech-grid">' +
           '<div>' +
             '<span class="lp-eyebrow">Teknologi</span>' +
-            '<h2 class="lp-h2">Dirancang prosedural, dicetak sendiri.</h2>' +
-            '<p class="lp-lead">Geometri lengan dibangun lewat skrip di Blender, bukan ' +
-              'dipahat manual. Satu angka diubah, seluruh model tercetak ulang konsisten — ' +
-              'penting untuk alat yang harus pas dengan tubuh yang berbeda-beda.</p>' +
+            '<h2 class="lp-h2">Purwarupa yang sudah bisa menggenggam.</h2>' +
+            '<p class="lp-lead">Seluruh bagian dicetak 3D dan dapat ditukar sendiri. ' +
+              'Foto di samping diambil dari rekaman purwarupa ASTA yang sesungguhnya, ' +
+              'bukan render.</p>' +
             '<div class="lp-spec">' +
               SPEC.map(function (s) {
                 return '<div><span>' + U.esc(s[0]) + '</span><b>' + U.esc(s[1]) + '</b></div>';
@@ -266,26 +391,63 @@
             '</div>' +
           '</div>' +
           '<div class="lp-reveal">' +
-            '<div class="lp-shots">' +
-              [['01-lengan-penuh', 'Lengan penuh'], ['02-tangan-genggam', 'Power grip'],
-               ['03-tangan-jepit', 'Pinch'], ['04-siku-socket', 'Siku & socket']]
-                .map(function (s) {
-                  return '<figure class="lp-shot"><img src="' + R + 'hero/' + s[0] +
-                    '.jpg" alt="Render 3D ASTA — ' + U.esc(s[1]) +
-                    '" loading="lazy" width="1200" height="1200"></figure>';
-                }).join('') +
+            '<div class="lp-shots lp-photos">' +
+              FOTO.map(function (f) {
+                return '<figure class="lp-shot"><img src="assets/foto/' + f[0] +
+                  '.webp" alt="Purwarupa ASTA — ' + U.esc(f[1]) +
+                  '" loading="lazy" width="1600" height="900"><figcaption>' +
+                  U.esc(f[1]) + '</figcaption></figure>';
+              }).join('') +
             '</div>' +
             '<div class="row center mt-4">' +
               '<a class="btn" href="' + (session ? 'model-3d.html' : 'masuk.html?next=model-3d.html') +
-                '">' + Icon('grid', 18) + '<span>Buka Studio 3D</span></a>' +
+                '">' + Icon('grid', 18) + '<span>Jelajahi model 3D</span></a>' +
             '</div>' +
           '</div>' +
         '</div>' +
       '</div>' +
     '</section>' +
 
+    /* ===================== Pengujian & manfaat ===================== */
+    '<section class="lp-section lp-alt" id="pengujian">' +
+      '<div class="lp-wrap">' +
+        '<div class="lp-test">' +
+          '<div class="lp-sus lp-reveal">' +
+            '<span class="lp-eyebrow">Hasil pengujian</span>' +
+            '<h2 class="lp-h2">Layak untuk dipakai.</h2>' +
+            '<p class="lp-lead">Kegunaan ASTA dievaluasi dengan <b>System Usability ' +
+              'Scale (SUS)</b>, kuesioner standar untuk menilai seberapa mudah sebuah ' +
+              'produk dipakai. Hasilnya menyatakan produk layak untuk dipakai.</p>' +
+            '<p class="t-sm muted">Pengujian kegunaan purwarupa, bukan uji klinis.</p>' +
+          '</div>' +
+          '<div class="lp-benefit">' +
+            '<article class="lp-card lp-reveal"><span class="lp-ico">' + Icon('user', 24) +
+              '</span><h3>Bagi pengguna</h3><p>Mendukung aktivitas fungsional sekaligus ' +
+              'menunjang rehabilitasi. Sistem yang dapat disesuaikan dan merespons input ' +
+              'pengguna menghadirkan pengalaman pemakaian yang lebih adaptif.</p></article>' +
+            '<article class="lp-card lp-reveal"><span class="lp-ico teal">' +
+              Icon('stethoscope', 24) + '</span><h3>Bagi rehabilitator</h3><p>Data ' +
+              'aktivitas pengguna menjadi informasi tambahan untuk memantau perkembangan ' +
+              'latihan dan mengevaluasi proses rehabilitasi.</p></article>' +
+          '</div>' +
+        '</div>' +
+        '<div class="lp-diff lp-reveal">' +
+          '<div><h3>Yang membedakan ASTA</h3>' +
+            '<ul>' +
+              '<li>' + Icon('shield', 18) + '<span><b>Non-invasif</b> — tanpa operasi, tanpa implan</span></li>' +
+              '<li>' + Icon('refresh', 18) + '<span><b>Modular</b> — bagian rusak dicetak ulang, bukan ganti alat</span></li>' +
+              '<li>' + Icon('link', 18) + '<span><b>Terhubung</b> — data latihan sampai ke tim rehabilitasi</span></li>' +
+            '</ul></div>' +
+          '<div><h3>' + POLA.length + ' pola cengkeram tersimpan</h3>' +
+            '<div class="lp-chips">' +
+              POLA.map(function (p) { return '<span>' + U.esc(p) + '</span>'; }).join('') +
+            '</div></div>' +
+        '</div>' +
+      '</div>' +
+    '</section>' +
+
     /* ===================== Untuk siapa ===================== */
-    '<section class="lp-section lp-alt" id="peran">' +
+    '<section class="lp-section" id="peran">' +
       '<div class="lp-wrap">' +
         '<span class="lp-eyebrow">Untuk siapa</span>' +
         '<h2 class="lp-h2">Empat peran, satu sumber kebenaran.</h2>' +
@@ -296,17 +458,13 @@
     '</section>' +
 
     /* ===================== Tim ===================== */
-    '<section class="lp-section" id="tim">' +
+    '<section class="lp-section lp-alt" id="tim">' +
       '<div class="lp-wrap">' +
         '<span class="lp-eyebrow">Tim</span>' +
-        '<h2 class="lp-h2">Dibangun oleh tim riset pelajar.</h2>' +
-        '<p class="lp-lead">ASTA dikerjakan lintas disiplin: riset klinis, desain mekanik, ' +
-          'elektronika, dan perangkat lunak.</p>' +
+        '<h2 class="lp-h2">Dibangun oleh enam pelajar SMA Negeri 1 Surakarta.</h2>' +
+        '<p class="lp-lead">ASTA dikerjakan lintas peran: riset, perangkat lunak, ' +
+          'infrastruktur TI, dan Internet of Things.</p>' +
         '<div class="lp-team" style="margin-top:38px" id="tim-grid"></div>' +
-        '<p class="lp-note">' + Icon('info', 18) +
-          '<span><b>Isian sementara.</b> Nama dan potret di atas masih berupa penanda. ' +
-          'Simpan foto tim ke <code>assets/tim/</code> lalu perbarui daftar ' +
-          '<code>TIM</code> di <code>js/pages/landing.js</code> untuk menggantinya.</span></p>' +
       '</div>' +
     '</section>' +
 
@@ -330,15 +488,16 @@
     '<section class="lp-section">' +
       '<div class="lp-wrap">' +
         '<div class="lp-final" id="final">' +
-          '<h2>Telusuri seluruh alurnya, dari sesi latihan sampai dasbor klinis.</h2>' +
-          '<p>Demo berjalan penuh di peramban Anda dengan simulator perangkat dan data ' +
-            'penelitian bawaan. Tidak perlu mendaftar.</p>' +
+          '<h2>ASTA hadir bukan sekadar menggantikan gerakan, tetapi membantu penggunanya ' +
+            'kembali berinteraksi dengan dunia di sekitarnya.</h2>' +
+          '<p>Telusuri alurnya sendiri, dari sesi latihan sampai dasbor rehabilitator. ' +
+            'Demo berjalan penuh di peramban dengan simulator perangkat. Tidak perlu mendaftar.</p>' +
           '<div class="lp-cta" style="justify-content:center">' +
             '<a class="btn btn-lg btn-white" href="' + U.esc(masukHref) + '">' +
               '<span>' + (session ? 'Buka dasbor' : 'Coba demo sekarang') + '</span>' +
               arrow() + '</a>' +
-            '<a class="btn btn-lg btn-outline-white" href="#teknologi">' +
-              '<span>Pelajari teknologinya</span></a>' +
+            '<a class="btn btn-lg btn-outline-white" href="#video">' +
+              '<span>Tonton video profil</span></a>' +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -360,6 +519,7 @@
           '</div>' +
           '<div class="lp-foot-cols">' +
             '<div><h4>Produk</h4><ul>' +
+              '<li><a href="#video">Video profil</a></li>' +
               '<li><a href="#solusi">Fitur</a></li>' +
               '<li><a href="#cara-kerja">Cara kerja</a></li>' +
               '<li><a href="#teknologi">Teknologi</a></li>' +
@@ -370,7 +530,9 @@
               '<li><a href="#peran">Peran pengguna</a></li>' +
             '</ul></div>' +
             '<div><h4>Informasi</h4><ul>' +
-              '<li><a href="#masalah">Latar masalah</a></li>' +
+              '<li><a href="#masalah">Latar belakang</a></li>' +
+              '<li><a href="#metode">Metode</a></li>' +
+              '<li><a href="#pengujian">Pengujian</a></li>' +
               '<li><a href="#tim">Tim</a></li>' +
               '<li><a href="#faq">FAQ</a></li>' +
             '</ul></div>' +
@@ -393,13 +555,14 @@
 
   /* ---------------- Kartu tim ---------------- */
   U.$('#tim-grid').innerHTML = TIM.map(function (m) {
-    return '<div class="lp-member lp-reveal' + (m.placeholder ? ' placeholder' : '') + '">' +
+    return '<div class="lp-member lp-reveal">' +
       '<div class="ava">' +
         (m.photo
           ? '<img src="' + U.esc(m.photo) + '" alt="" width="96" height="96">'
           : Illus.avatar({ seed: m.seed, hijab: m.hijab })) +
       '</div>' +
-      '<h3>' + U.esc(m.name) + '</h3><span>' + U.esc(m.role) + '</span></div>';
+      '<h3>' + U.esc(m.name || m.role) + '</h3><span>' +
+        U.esc(m.name ? m.role : 'SMA Negeri 1 Surakarta') + '</span></div>';
   }).join('');
 
   /* ---------------- Hiasan latar ---------------- */
@@ -411,8 +574,9 @@
   final.classList.add('decor-host', 'on-dark');
   Decor.mount(final, 'wave', { seed: 6, pos: 'bottom' });
 
-  [['#masalah', 'neuro', 19, 'violet'], ['#cara-kerja', 'circuit', 61, 'primary'],
-   ['#tim', 'grid', 40, 'teal'], ['#faq', 'orbit', 88, 'primary']].forEach(function (d) {
+  [['#masalah', 'neuro', 19, 'violet'], ['#metode', 'orbit', 27, 'teal'],
+   ['#cara-kerja', 'circuit', 61, 'primary'], ['#tim', 'grid', 40, 'teal'],
+   ['#faq', 'orbit', 88, 'primary']].forEach(function (d) {
     var el = U.$(d[0]);
     if (!el) return;
     el.classList.add('decor-host');

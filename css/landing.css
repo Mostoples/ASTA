@@ -372,7 +372,7 @@
 /* ---------------- Tim ---------------- */
 .lp-team {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--s-5);
 }
 .lp-member {
@@ -524,6 +524,170 @@
 }
 
 /* ---------------- Muncul saat digulir ---------------- */
+/* ---------------- Konten profil (video, fokus, metode, pengujian) ---------------- */
+.lp-center { text-align: center; }
+.lp-center .lp-h2, .lp-center .lp-lead { margin-inline: auto; }
+.lp-tagline {
+  font-weight: 750;
+  letter-spacing: .02em;
+  color: var(--primary-700) !important;
+  margin-top: -6px !important;
+}
+.lp-h3 { font-size: 19px; margin: clamp(34px, 4vw, 48px) 0 18px; letter-spacing: -.01em; }
+
+.lp-video {
+  margin: clamp(28px, 4vw, 44px) auto 0;
+  max-width: 1040px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: #0b1220;
+  box-shadow: var(--nm-3);
+}
+.lp-video video { display: block; width: 100%; height: auto; aspect-ratio: 16/9; background: #0b1220; }
+
+.lp-callout {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 30px 0 0;
+  padding: 18px 22px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--nm-in-soft);
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.lp-callout svg { flex: 0 0 auto; color: var(--teal); margin-top: 2px; }
+
+.lp-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-5); }
+.lp-num {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 26px;
+  color: var(--line);
+}
+
+.lp-loop {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 0;
+  margin: 34px 0 0;
+  padding: 0;
+  counter-reset: it;
+}
+.lp-loop li {
+  counter-increment: it;
+  display: flex;
+  align-items: center;
+  font-weight: 650;
+  font-size: 14.5px;
+}
+.lp-loop li::before {
+  content: counter(it);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #fff;
+  font-size: 12.5px;
+}
+.lp-loop li:not(:last-child)::after {
+  content: '';
+  width: clamp(18px, 4vw, 54px);
+  height: 2px;
+  margin: 0 12px;
+  background: repeating-linear-gradient(to right, var(--line) 0 6px, transparent 6px 10px);
+}
+.lp-loop-note {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  color: var(--text-3);
+}
+
+.lp-systems {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--s-4);
+  margin-top: 34px;
+}
+.lp-systems div {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 18px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--nm-1);
+}
+.lp-systems i {
+  font-style: normal;
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--primary);
+}
+.lp-systems b { font-size: 15px; }
+.lp-systems span { font-size: 13.2px; color: var(--text-2); line-height: 1.5; }
+
+.lp-steps.lp-steps-3 { grid-template-columns: repeat(3, 1fr); row-gap: var(--s-6); }
+.lp-steps-3 .lp-step:nth-child(3n)::after { display: none; }
+
+.lp-photos { grid-template-columns: repeat(2, 1fr); }
+.lp-photos .lp-shot { position: relative; }
+.lp-photos .lp-shot img { aspect-ratio: 16/10; }
+.lp-shot figcaption {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(11, 18, 32, .62);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lp-test {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+}
+.lp-benefit { display: grid; gap: var(--s-5); }
+.lp-diff {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 48px);
+  margin-top: clamp(34px, 4vw, 52px);
+  padding: var(--s-5);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--nm-2);
+}
+.lp-diff h3 { font-size: 17px; margin: 0 0 14px; }
+.lp-diff ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.lp-diff li { display: flex; gap: 10px; font-size: 14.5px; color: var(--text-2); line-height: 1.5; }
+.lp-diff li svg { flex: 0 0 auto; color: var(--primary); margin-top: 2px; }
+.lp-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.lp-chips span {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: var(--nm-flat);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
 .lp-reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -545,6 +709,10 @@
   .lp-grid-3, .lp-team { grid-template-columns: repeat(2, 1fr); }
   .lp-steps { grid-template-columns: repeat(2, 1fr); row-gap: var(--s-6); }
   .lp-step:nth-child(2)::after { display: none; }
+  .lp-grid-4, .lp-steps.lp-steps-3 { grid-template-columns: repeat(2, 1fr); }
+  .lp-steps-3 .lp-step::after { display: none; }
+  .lp-systems { grid-template-columns: repeat(3, 1fr); }
+  .lp-test, .lp-diff { grid-template-columns: 1fr; }
 }
 
 /* ---------------- Ponsel ---------------- */
@@ -566,6 +734,11 @@
 
   .lp-stats { grid-template-columns: repeat(2, 1fr); row-gap: var(--s-5); }
   .lp-grid-3, .lp-grid-2, .lp-steps, .lp-team, .lp-shots { grid-template-columns: 1fr; }
+  .lp-grid-4, .lp-steps.lp-steps-3 { grid-template-columns: 1fr; }
+  .lp-shots.lp-photos { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .lp-shot figcaption { font-size: 10.5px; left: 6px; bottom: 6px; padding: 3px 8px; }
+  .lp-systems { grid-template-columns: 1fr 1fr; }
+  .lp-loop li:not(:last-child)::after { width: 14px; margin: 0 8px; }
   .lp-step::after { display: none; }
   .lp-hero-stage .arm3d-canvas { min-height: 240px; aspect-ratio: 1/1; }
 
