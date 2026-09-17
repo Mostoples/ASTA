@@ -383,8 +383,8 @@
   box-shadow: var(--nm-1);
 }
 .lp-member .ava {
-  width: 96px;
-  height: 96px;
+  width: 132px;
+  height: 132px;
   margin: 0 auto 14px;
   border-radius: 50%;
   overflow: hidden;
@@ -392,6 +392,7 @@
   box-shadow: var(--nm-flat);
 }
 .lp-member .ava svg { width: 100%; height: 100%; display: block; }
+.lp-member .ava img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .lp-member h3 { font-size: 15.5px; margin: 0 0 4px; }
 .lp-member span { font-size: 13px; color: var(--text-3); }
 

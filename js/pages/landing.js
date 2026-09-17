@@ -138,16 +138,16 @@
     ['Konektivitas', 'Bluetooth Low Energy']
   ];
 
-  /* Tim: peran diambil dari perkenalan di video profil. Nama sengaja
-     belum ditulis sampai ejaan resminya dikonfirmasi tim; isi `name`
-     (dan `photo` bila ada izin) untuk menampilkannya. */
+  /* Tim: peran dan foto diambil dari klip perkenalan di video profil.
+     Nama sengaja belum ditulis sampai ejaan resminya dikonfirmasi tim;
+     isi `name` untuk menampilkannya. */
   var TIM = [
-    { name: '', role: 'Team Leader', seed: 'a1', hijab: false },
-    { name: '', role: 'Researcher', seed: 'b2', hijab: false },
-    { name: '', role: 'Researcher', seed: 'c3', hijab: false },
-    { name: '', role: 'Software Engineer', seed: 'd4', hijab: false },
-    { name: '', role: 'IT Engineer', seed: 'e5', hijab: false },
-    { name: '', role: 'IoT Engineer', seed: 'f6', hijab: false }
+    { name: '', role: 'Team Leader', seed: 'a1', photo: 'assets/tim/team-leader.webp' },
+    { name: '', role: 'Researcher', seed: 'b2', photo: 'assets/tim/researcher-a.webp' },
+    { name: '', role: 'Researcher', seed: 'c3', photo: 'assets/tim/researcher-b.webp' },
+    { name: '', role: 'Software Engineer', seed: 'd4', photo: 'assets/tim/software-engineer.webp' },
+    { name: '', role: 'IT Engineer', seed: 'e5', photo: 'assets/tim/it-engineer.webp' },
+    { name: '', role: 'IoT Engineer', seed: 'f6', photo: 'assets/tim/iot-engineer.webp' }
   ];
 
   var FAQ = [
@@ -558,7 +558,7 @@
     return '<div class="lp-member lp-reveal">' +
       '<div class="ava">' +
         (m.photo
-          ? '<img src="' + U.esc(m.photo) + '" alt="" width="96" height="96">'
+          ? '<img src="' + U.esc(m.photo) + '" alt="Foto ' + U.esc(m.name || m.role) + ' ASTA" width="480" height="480" loading="lazy">'
           : Illus.avatar({ seed: m.seed, hijab: m.hijab })) +
       '</div>' +
       '<h3>' + U.esc(m.name || m.role) + '</h3><span>' +
