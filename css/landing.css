@@ -392,7 +392,7 @@
   box-shadow: var(--nm-flat);
 }
 .lp-member .ava svg { width: 100%; height: 100%; display: block; }
-.lp-member .ava img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.lp-member .ava img, .lp-member .ava video { width: 100%; height: 100%; display: block; object-fit: cover; }
 .lp-member h3 { font-size: 15.5px; margin: 0 0 4px; }
 .lp-member span { font-size: 13px; color: var(--text-3); }
 

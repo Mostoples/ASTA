@@ -142,12 +142,12 @@
      Nama sengaja belum ditulis sampai ejaan resminya dikonfirmasi tim;
      isi `name` untuk menampilkannya. */
   var TIM = [
-    { name: '', role: 'Team Leader', seed: 'a1', photo: 'assets/tim/team-leader.webp' },
-    { name: '', role: 'Researcher', seed: 'b2', photo: 'assets/tim/researcher-a.webp' },
-    { name: '', role: 'Researcher', seed: 'c3', photo: 'assets/tim/researcher-b.webp' },
-    { name: '', role: 'Software Engineer', seed: 'd4', photo: 'assets/tim/software-engineer.webp' },
-    { name: '', role: 'IT Engineer', seed: 'e5', photo: 'assets/tim/it-engineer.webp' },
-    { name: '', role: 'IoT Engineer', seed: 'f6', photo: 'assets/tim/iot-engineer.webp' }
+    { name: '', role: 'Team Leader', seed: 'a1', clip: 'assets/tim/team-leader.mp4', photo: 'assets/tim/team-leader.webp' },
+    { name: '', role: 'Researcher', seed: 'b2', clip: 'assets/tim/researcher-a.mp4', photo: 'assets/tim/researcher-a.webp' },
+    { name: '', role: 'Researcher', seed: 'c3', clip: 'assets/tim/researcher-b.mp4', photo: 'assets/tim/researcher-b.webp' },
+    { name: '', role: 'Software Engineer', seed: 'd4', clip: 'assets/tim/software-engineer.mp4', photo: 'assets/tim/software-engineer.webp' },
+    { name: '', role: 'IT Engineer', seed: 'e5', clip: 'assets/tim/it-engineer.mp4', photo: 'assets/tim/it-engineer.webp' },
+    { name: '', role: 'IoT Engineer', seed: 'f6', clip: 'assets/tim/iot-engineer.mp4', photo: 'assets/tim/iot-engineer.webp' }
   ];
 
   var FAQ = [
@@ -554,16 +554,33 @@
   }).join('');
 
   /* ---------------- Kartu tim ---------------- */
+  var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   U.$('#tim-grid').innerHTML = TIM.map(function (m) {
     return '<div class="lp-member lp-reveal">' +
       '<div class="ava">' +
         (m.photo
-          ? '<img src="' + U.esc(m.photo) + '" alt="Foto ' + U.esc(m.name || m.role) + ' ASTA" width="480" height="480" loading="lazy">'
+          ? (m.clip && !reduceMotion
+              ? '<video src="' + U.esc(m.clip) + '" poster="' + U.esc(m.photo) + '" muted loop ' +
+                'playsinline preload="none" aria-label="Cuplikan perkenalan ' + U.esc(m.name || m.role) +
+                '" width="320" height="320"></video>'
+              : '<img src="' + U.esc(m.photo) + '" alt="Foto ' + U.esc(m.name || m.role) + ' ASTA" width="480" height="480" loading="lazy">')
           : Illus.avatar({ seed: m.seed, hijab: m.hijab })) +
       '</div>' +
       '<h3>' + U.esc(m.name || m.role) + '</h3><span>' +
         U.esc(m.name ? m.role : 'SMA Negeri 1 Surakarta') + '</span></div>';
   }).join('');
+
+  // Cuplikan perkenalan hanya diputar saat terlihat di layar
+  var clips = U.$$('#tim-grid video');
+  if (clips.length && window.IntersectionObserver) {
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { var p = e.target.play(); if (p && p.catch) p.catch(function () {}); }
+        else e.target.pause();
+      });
+    }, { threshold: 0.3 });
+    clips.forEach(function (v) { cio.observe(v); });
+  }
 
   /* ---------------- Hiasan latar ---------------- */
   var hero = U.$('#hero');
