@@ -29,6 +29,7 @@ pernyataan izin ini:
 - Kalau wawancara dilakukan di rumah sakit, klinik, atau yayasan, minta izin lembaganya.
 
 **Teknis.**
+
 - Dua alat perekam: satu kamera utama (16:9, horizontal), satu ponsel untuk suara cadangan.
 - Responden jangan membelakangi jendela. Cari ruangan yang sepi, jauh dari kipas dan jalan.
 - Pewawancara duduk di samping kamera, bukan di belakangnya, supaya arah pandang responden
@@ -133,6 +134,7 @@ Hanya jika responden menawarkan diri atau menyetujui, tidak boleh didesak. Alat 
 menempel di luar, tanpa menekan kuat, dan langsung dilepas bila terasa tidak nyaman.
 
 Tiga pertanyaan singkat sesudahnya, direkam:
+
 - "Bagaimana rasanya saat dipasang?"
 - "Bagian mana yang terasa mengganggu?"
 - "Kalau ada satu hal yang ingin diubah dari alat ini, apa?"
@@ -145,6 +147,7 @@ hasil percobaan ini sebagai "uji klinis"; sebut saja **uji coba pemakaian awal**
 ## 4. Daftar gambar pendukung yang perlu direkam
 
 Setelah wawancara, rekam potongan tanpa suara berikut, masing-masing 10 detik, kamera diam:
+
 - Responden beraktivitas biasa (berjalan, duduk, mengobrol) — untuk latar pembuka.
 - Tangan responden saat bercerita.
 - Suasana tempat wawancara.
