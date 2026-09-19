@@ -138,13 +138,67 @@ yang dinilai juri.
 
 ---
 
-## 7. Langkah eksekusi (untuk Sonnet 5)
+## 7. Pilihan alat
+
+Anda memberi referensi [`claude-code-video-toolkit`](https://github.com/digitalsamba/claude-code-video-toolkit)
+(digitalsamba). Sudah saya periksa isinya. **Tidak saya pakai untuk video ini**, dengan
+alasan:
+
+| Toolkit ini dibangun untuk… | Video kita justru… |
+|---|---|
+| Merakit video dari **visual buatan AI** (Remotion + LTX-2 untuk klip video, Ideogram untuk kartu, SadTalker untuk kepala bicara) | Memakai **rekaman asli** responden dan purwarupa — visual buatan AI di sini malah melanggar aturan orisinalitas HRIE |
+| Suara dari **TTS/kloning suara ElevenLabs** (berbayar, perlu kunci API) | Memakai **suara asli responden**, yang justru harus dijaga otentik, bukan diganti |
+| Girang di **Remotion** (React + Node) yang dirender lewat **GPU cloud** (Modal/RunPod, berbayar per render) | Cukup dirender lokal di laptop — sudah terbukti pada video semifinal, tanpa biaya dan tanpa data responden terkirim ke pihak ketiga |
+| Melacak dialog lewat **whisper.cpp** general-purpose | Kita sudah pakai **faster-whisper** yang sama persis prinsipnya, sudah disetel untuk Bahasa Indonesia berlogat dan sudah terbukti akurat cukup di video semifinal |
+
+Dengan kata lain, toolkit itu menjawab masalah "saya tidak punya rekaman, buatkan videonya
+dari nol dengan AI". Masalah kita justru sebaliknya: rekaman sudah ada, dan tugasnya adalah
+memotongnya dengan presisi tanpa mengarang apa pun serta menjaga privasi wajah tim. Alat
+yang tepat untuk ini adalah yang sudah dipakai dan terbukti pada video semifinal.
+
+**Alat yang dipakai untuk video ini, dan alasannya:**
+
+| Kebutuhan | Alat | Alasan |
+|---|---|---|
+| Potong presisi + gerbang suara + ducking musik | **ffmpeg** (lokal, gratis) | sudah terbukti pada video semifinal; filter `sidechaincompress`, `loudnorm`, `xfade`/`acrossfade` semua tersedia |
+| Transkripsi untuk subtitle & pencarian kutipan | **faster-whisper** (model `medium`, lokal) | tanpa kunci API, tanpa rekaman terkirim ke server luar — penting karena ini data pribadi responden |
+| Motion graphic & kartu | **HTML/CSS + Playwright** (`mg.html`, `cards.html`) | satu sistem desain dengan situs asta-id.web.app (neumorphism, token warna sama); dirender frame demi frame jadi deterministik, bukan hasil tebakan model gambar |
+| Perakitan akhir | **Python** (`build-dokumenter.py`, turunan `build.py`) | logika pemotongan & penjadwalan sudah ada, tinggal diisi daftar segmen baru |
+| Pemantauan progres | `monitor.py` (panel lokal) | sudah ada, tidak perlu diganti |
+
+**Satu ide dari toolkit itu yang layak dipakai:** pemisahan tegas "teks yang harus akurat
+tidak boleh dari AI generatif" (prinsip *trustworthy text* pada skill `moviepy` mereka).
+Prinsip itu sudah kita pegang lebih ketat: nama, kutipan, dan angka apa pun di video ASTA
+ditulis tangan dari transkrip yang sudah dibaca ulang, bukan dibiarkan mesin menebak.
+
+---
+
+## 8. Menjaga wajah tim tidak terekam
+
+Instruksi Anda: badan/suara tim boleh terekam, wajah tidak boleh. Langkah kerjanya:
+
+1. **Deteksi otomatis sebagai penyaring awal.** Setiap rentang terpilih diperiksa dengan
+   pendeteksi wajah (OpenCV Haar cascade, berjalan lokal) tiap 0,2 detik untuk menandai
+   detik-detik yang berisiko.
+2. **Peninjauan manual atas semua tanda itu** — pendeteksi otomatis bisa lolos dari sudut
+   miring, jadi keputusan akhir tetap dengan mata, bukan skrip.
+3. **Perbaikan menurut prioritas:**
+   - **Pangkas bingkai (crop)** ke arah responden bila wajah tim ada di tepi — cara paling
+     rapi, dipakai dulu.
+   - **Ganti ke sudut kamera lain** pada detik yang sama, bila tersedia.
+   - **Buang rentang itu** bila kedua cara di atas tidak cukup.
+   - **Efek blur** (`ffmpeg boxblur` pada area bertanda `drawbox`) dipakai hanya sebagai
+     jalan terakhir, karena hasilnya terlihat sebagai tambalan.
+4. **Pemeriksaan akhir**: lembar kontak dari video hasil rakitan (bukan bahan mentahnya)
+   diperiksa sekali lagi sebelum dikirim ke Anda.
+
+---
+
+## 9. Langkah eksekusi (untuk Sonnet 5)
 
 1. **Transkripsi ulang rentang terpilih** dengan model `medium` untuk bahan subtitle →
    serahkan ke tim untuk dikoreksi sebelum dipasang.
-2. **Pemeriksaan wajah tim**: ambil satu bingkai tiap 0,5 detik pada tiap rentang terpilih,
-   susun lembar kontak, catat rentang yang wajah timnya masuk bingkai, lalu geser potongan
-   atau pangkas gambar. Ini syarat mutlak dari instruksi Anda.
+2. **Pemeriksaan wajah tim** mengikuti bagian 8 — syarat mutlak dari instruksi Anda.
 3. **Normalisasi klip**: potong rentang, putar `145831`, samakan ke 1920×1080 30 fps,
    samakan warna antar kamera.
 4. **Render motion graphic**: tambahkan delapan adegan bagian 5 ke `tools/asta-video/mg.html`.
@@ -152,12 +206,13 @@ yang dinilai juri.
    segmen sesuai bagian 4. Gerbang suara, transisi, dan pencampuran musik memakai kode yang
    sudah terbukti di video semifinal.
 6. **Verifikasi**: durasi 100–115 detik; tidak ada suara di luar rentang ucapan; tidak ada
-   wajah tim; subtitle sama dengan ucapan; musik tidak menutupi suara responden.
+   wajah tim (lembar kontak pada hasil akhir); subtitle sama dengan ucapan; musik tidak
+   menutupi suara responden.
 7. **Panel pantau** `tools/asta-video/monitor.py` tetap bisa dipakai selama render.
 
 ---
 
-## 8. Yang perlu Anda putuskan sebelum eksekusi
+## 10. Yang perlu Anda putuskan sebelum eksekusi
 
 1. **Klip penutup**: rekam ulang kalimat "ASTA, tangan prostetik masa depan", atau pakai
    kartu teks?
