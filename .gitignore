@@ -55,3 +55,7 @@ __pycache__/
 # Presentasi final (hasil tools/ppt)
 PRESENTASI FINAL HRIE 2026/
 tools/ppt/out/
+
+# Rekaman lapangan (mentah, tidak masuk repositori)
+video/pengujian/
+video/_build/
